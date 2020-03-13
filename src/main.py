@@ -10,8 +10,7 @@ def process_task(task):
 
 
 if __name__ == "__main__":
-    taskFilter = taskfilter.TaskFilter(config.training_tasks)
-    for task in taskFilter.filter_tasks_by_number_of_colors(0,2,True):
+    for task in taskfilter.filter_tasks_by_number_of_colors(config.training_tasks,0,2,True):
         # process_task(task)
         # print(task)
         visualize.plot_task(task)
