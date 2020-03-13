@@ -17,4 +17,4 @@ if __name__ == "__main__":
         print(config.training_tasks[i])
         # process_task(task)
         # print(task)
-        visualize.plot_task(task)
+        visualize.plot_task(task) 

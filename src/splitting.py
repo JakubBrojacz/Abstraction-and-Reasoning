@@ -1,22 +1,27 @@
 class Element:
     def __init__(self, matrix, pos, color):
-        self.matrix = [None] * len(matrix)   
-        for i in range(len(matrix)):    
-            self.matrix[i] = matrix[i]
-        self.pos = pos
+        self.matrix = [[value for value in row] for row in matrix]
+        self.pos = (pos[0], pos[1])
         self.color = color
 
+def get_objects(matrix, backgroundColor = 0, numberOfColors = 10, transparentColor = 10):
+    divisions = []
+    divisions.append(split_only_by_color(matrix, backgroundColor, transparentColor, numberOfColors))
+    divisions.append(split(matrix, backgroundColor, transparentColor, 4, True))
+    divisions.append(split(matrix, backgroundColor, transparentColor, 8, True))
+    divisions.append(split(matrix, backgroundColor, transparentColor, 4, False))
+    divisions.append(split(matrix, backgroundColor, transparentColor, 8, False))
+    return divisions
 
-def SplitOnlyByColor(matrix, backgroundColor, transparentColor, numberOfColors):
-    
+
+def split_only_by_color(matrix, backgroundColor, transparentColor, numberOfColors):
+
     listOfElements = []
     isColor = [False for i in range(numberOfColors)]
     leftUpCornerElementFrame = []
     rightDownCornerOfElementFrame = []
     width = len(matrix[0])
     height = len(matrix)
-    
-    
 
     for i in range(numberOfColors):
         leftUpCornerElementFrame.append((height, width))
@@ -39,7 +44,9 @@ def SplitOnlyByColor(matrix, backgroundColor, transparentColor, numberOfColors):
     matrices = []
     for i in range(numberOfColors):
         if isColor[i]:
-            matrixForElement = [[transparentColor for j in range(rightDownCornerOfElementFrame[i][1] - leftUpCornerElementFrame[i][1] + 1)] for k in range(rightDownCornerOfElementFrame[i][0] - leftUpCornerElementFrame[i][0] + 1)] 
+            elementFrameWidth = rightDownCornerOfElementFrame[i][1] - leftUpCornerElementFrame[i][1] + 1
+            elementFrameHeight = rightDownCornerOfElementFrame[i][0] - leftUpCornerElementFrame[i][0] + 1
+            matrixForElement = [[transparentColor for j in range(elementFrameWidth)] for k in range(elementFrameHeight)] 
             matrices.append(matrixForElement)
         else:
             matrices.append([None])
@@ -47,18 +54,19 @@ def SplitOnlyByColor(matrix, backgroundColor, transparentColor, numberOfColors):
     for row in range(height):
         for col in range(width):
             currentColor=matrix[row][col]
-            matrices[currentColor][row - leftUpCornerElementFrame[currentColor][0]][col - leftUpCornerElementFrame[currentColor][1]] = currentColor
+            pos= (row - leftUpCornerElementFrame[currentColor][0], col - leftUpCornerElementFrame[currentColor][1])
+            matrices[currentColor][pos[0]][pos[1]] = currentColor
 
     for i in range(numberOfColors):
         if i!=backgroundColor and isColor[i]:
-            listOfElements.append(Element(matrices[i], (leftUpCornerElementFrame[i][0], leftUpCornerElementFrame[i][1]), i))
+            listOfElements.append(Element(matrices[i], leftUpCornerElementFrame[i], i))
         
     return listOfElements   
             
 
 
 
-def Split(matrix, backgroundColor, transparentColor, spaceConnectionType = 4, colorMatters = True):
+def split(matrix, backgroundColor, transparentColor, spaceConnectionType = 4, colorMatters = True):
     
     if spaceConnectionType not in [4, 8]:
         raise ValueError("spaceConnectionType should be 4 or 8")
@@ -68,7 +76,7 @@ def Split(matrix, backgroundColor, transparentColor, spaceConnectionType = 4, co
 
     #isCellAssignedToSomeElement  = [[False] * width] * height
 
-    isCellAssignedToSomeElement = [[False]*width for i in range(height)]
+    isCellAssignedToSomeElement = [[False] * width for i in range(height)]
 
     stack = []
     listOfElements = []
@@ -96,73 +104,149 @@ def Split(matrix, backgroundColor, transparentColor, spaceConnectionType = 4, co
                         leftUpCornerElementFrame = (row, leftUpCornerElementFrame[1])
                     if col < leftUpCornerElementFrame[1]:
                         leftUpCornerElementFrame = (leftUpCornerElementFrame[0], col)
-                    
+
                     if colorMatters:
-                        CheckNeighboursColorMatters(matrix, isCellAssignedToSomeElement, stack, currentColor, row, col, height, width, spaceConnectionType)
+                        check_neighbours_color_matters(
+                            matrix, 
+                            isCellAssignedToSomeElement, 
+                            stack, 
+                            currentColor, 
+                            row, col, 
+                            height, width, 
+                            spaceConnectionType)
                     else:
-                        CheckNeighboursColorNotMatters(matrix, isCellAssignedToSomeElement, stack, backgroundColor, row, col, height, width, spaceConnectionType)
-                        
-                elementMatrix =[[transparentColor] * (rightDownCornerOfElementFrame[1] - leftUpCornerElementFrame[1] + 1) for k in range(rightDownCornerOfElementFrame[0] - leftUpCornerElementFrame[0] + 1)]             
+                        check_neighbours_color_not_matters(
+                            matrix, 
+                            isCellAssignedToSomeElement, 
+                            stack, 
+                            backgroundColor, 
+                            row, col, 
+                            height, width, 
+                            spaceConnectionType)
+                elementFrameWidth = rightDownCornerOfElementFrame[1] - leftUpCornerElementFrame[1] + 1
+                elementFrameHeight = rightDownCornerOfElementFrame[0] - leftUpCornerElementFrame[0] + 1        
+                elementMatrix =[[transparentColor] * elementFrameWidth for k in range(elementFrameHeight)]             
                 for cell in listOfCellsBelongingToElement:
-                    elementMatrix[cell[0] - leftUpCornerElementFrame[0]][cell[1] - leftUpCornerElementFrame[1]] = matrix[cell[0]][cell[1]]
-                listOfElements.append(Element(elementMatrix, (leftUpCornerElementFrame[0], leftUpCornerElementFrame[1]), currentColor))
+                    pos= (cell[0] - leftUpCornerElementFrame[0], cell[1] - leftUpCornerElementFrame[1])
+                    elementMatrix[pos[0]][pos[1]] = matrix[cell[0]][cell[1]]
+                if colorMatters:
+                    colorOfElement = currentColor
+                else:
+                    colorOfElement = None
+                listOfElements.append(Element(elementMatrix, leftUpCornerElementFrame, colorOfElement))
                 
           
     return listOfElements
 
 
-def CheckNeighboursColorMatters(matrix, isCellAssignedToSomeElement, stack, currentColor, row, col, height, width, spaceConnectionType):
+def check_neighbours_color_matters(matrix, isCellAssignedToSomeElement, stack, currentColor, row, col, height, width, spaceConnectionType):
     
-    if row > 0 and not isCellAssignedToSomeElement[row - 1][col] and matrix[row - 1][col] == currentColor:  # up
+    if (row > 0 and 
+        not isCellAssignedToSomeElement[row - 1][col] and 
+        matrix[row - 1][col] == currentColor):  
+        # up
         stack.append((row - 1, col))
         
-    if col > 0 and not isCellAssignedToSomeElement[row][col - 1] and matrix[row][col - 1] == currentColor: # left
+    if (col > 0 and
+        not isCellAssignedToSomeElement[row][col - 1] 
+        and matrix[row][col - 1] == currentColor): 
+        # left
         stack.append((row, col - 1))
     
-    if row < (height - 1) and not isCellAssignedToSomeElement[row + 1][col] and matrix[row + 1][col] == currentColor: # down
+    if (row < (height - 1) and 
+        not isCellAssignedToSomeElement[row + 1][col] and 
+        matrix[row + 1][col] == currentColor): 
+        # down
         stack.append((row + 1, col))
     
-    if col < (width - 1) and not isCellAssignedToSomeElement[row][col + 1] and matrix[row][col + 1] == currentColor: # right
+    if (col < (width - 1) and 
+        not isCellAssignedToSomeElement[row][col + 1] and 
+        matrix[row][col + 1] == currentColor): 
+        # right
         stack.append((row, col + 1))
     
     if spaceConnectionType == 8:
-        if row > 0 and col > 0 and not isCellAssignedToSomeElement[row - 1][col - 1] and matrix[row - 1][col - 1] == currentColor:  # up-left
+        if (row > 0 and col > 0 and 
+            not isCellAssignedToSomeElement[row - 1][col - 1] and 
+            matrix[row - 1][col - 1] == currentColor):  
+            # up-left
             stack.append((row - 1, col - 1))
     
-        if row > 0 and col < (width - 1) and not isCellAssignedToSomeElement[row - 1][col + 1] and matrix[row - 1][col + 1] == currentColor: # up-right
+        if (row > 0 and 
+            col < (width - 1) and 
+            not isCellAssignedToSomeElement[row - 1][col + 1] and 
+            matrix[row - 1][col + 1] == currentColor): 
+            # up-right
             stack.append((row - 1, col + 1))
     
-        if row < (height - 1) and col < (width - 1) and not isCellAssignedToSomeElement[row + 1][col + 1] and matrix[row + 1][col + 1] == currentColor: # down-right
+        if (row < (height - 1) and 
+            col < (width - 1) and 
+            not isCellAssignedToSomeElement[row + 1][col + 1] and 
+            matrix[row + 1][col + 1] == currentColor): 
+            # down-right
             stack.append((row + 1, col + 1))
     
-        if row < (height - 1) and col > 0 and not isCellAssignedToSomeElement[row + 1][col - 1] and matrix[row + 1][col - 1] == currentColor: # down-left
+        if (row < (height - 1) 
+            and col > 0 and 
+            not isCellAssignedToSomeElement[row + 1][col - 1] and 
+            matrix[row + 1][col - 1] == currentColor): 
+            # down-left
             stack.append((row + 1, col - 1))
 
 
 
-def CheckNeighboursColorNotMatters(matrix, isCellAssignedToSomeElement, stack, backgroundColor, row, col, height, width, spaceConnectionType):
+def check_neighbours_color_not_matters(matrix, isCellAssignedToSomeElement, stack, backgroundColor, row, col, height, width, spaceConnectionType):
     
-    if row > 0 and not isCellAssignedToSomeElement[row - 1][col] and matrix[row - 1][col] != backgroundColor:  # up
+    if (row > 0 and 
+        not isCellAssignedToSomeElement[row - 1][col] and 
+        matrix[row - 1][col] != backgroundColor):  
+        # up
         stack.append((row - 1, col))
         
-    if col > 0 and not isCellAssignedToSomeElement[row][col - 1] and matrix[row][col - 1] != backgroundColor: # left
+    if (col > 0 and 
+        not isCellAssignedToSomeElement[row][col - 1] and 
+        matrix[row][col - 1] != backgroundColor): 
+        # left
         stack.append((row, col - 1))
     
-    if row < (height - 1) and not isCellAssignedToSomeElement[row + 1][col] and matrix[row + 1][col] != backgroundColor: # down
-        stack.append((row + 1, col))
+    if (row < (height - 1) and 
+        not isCellAssignedToSomeElement[row + 1][col] and 
+        matrix[row + 1][col] != backgroundColor): 
+        # down
+            stack.append((row + 1, col))
     
-    if col < (width - 1) and not isCellAssignedToSomeElement[row][col + 1] and matrix[row][col + 1] != backgroundColor: # right
-        stack.append((row, col + 1))
+    if (col < (width - 1) and 
+        not isCellAssignedToSomeElement[row][col + 1] and 
+        matrix[row][col + 1] != backgroundColor):
+        # right
+            stack.append((row, col + 1))
     
     if spaceConnectionType == 8:
-        if row > 0 and col > 0 and not isCellAssignedToSomeElement[row - 1][col - 1] and matrix[row - 1][col - 1] != backgroundColor:  # up-left
+        if (row > 0 and 
+            col > 0 and 
+            not isCellAssignedToSomeElement[row - 1][col - 1] and 
+            matrix[row - 1][col - 1] != backgroundColor):  
+            # up-left
             stack.append((row - 1, col - 1))
     
-        if row > 0 and col < (width - 1) and not isCellAssignedToSomeElement[row - 1][col + 1] and matrix[row - 1][col + 1] != backgroundColor: # up-right
+        if (row > 0 and 
+            col < (width - 1) and 
+            not isCellAssignedToSomeElement[row - 1][col + 1] and 
+            matrix[row - 1][col + 1] != backgroundColor): 
+            # up-right
             stack.append((row - 1, col + 1))
     
-        if row < (height - 1) and col < (width - 1) and not isCellAssignedToSomeElement[row + 1][col + 1] and matrix[row + 1][col + 1] != backgroundColor: # down-right
+        if (row < (height - 1) and 
+            col < (width - 1) and 
+            not isCellAssignedToSomeElement[row + 1][col + 1] 
+            and matrix[row + 1][col + 1] != backgroundColor): 
+            # down-right
             stack.append((row + 1, col + 1))
     
-        if row < (height - 1) and col > 0 and not isCellAssignedToSomeElement[row + 1][col - 1] and matrix[row + 1][col - 1] != backgroundColor: # down-left
+        if (row < (height - 1) and 
+            col > 0 and 
+            not isCellAssignedToSomeElement[row + 1][col - 1] and 
+            matrix[row + 1][col - 1] != backgroundColor): 
+            # down-left
             stack.append((row + 1, col - 1))
+
