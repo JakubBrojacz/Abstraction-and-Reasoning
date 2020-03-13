@@ -30,13 +30,13 @@ def calculate(input, info, operations):
 
 
 def process_input_output(info, input, output):
-    input.get_objects() #set objects property
+    input.get_objects()
     output.get_objects()
     num_divisions = len(input.objects)
     for i in range(num_divisions):
         for op1 in operations:
             for op2 in operations:
-                if op2.exec(op1.exec(input)).equals(output) #todo: equals
+                if op2.exec(op1.exec(input)).equals(output)
                     info.add_path([op1, op2])
 
 
@@ -48,15 +48,10 @@ def process_task(id, task, operations, results):
         process_input_output(task['train'][i]['input'], task['train'][i]['output'], info, operations)
 
     num_test = len(task['test'])
-    if num_test == 1:
-        result = calculate(task['test'][0]['input'], info)
+    for i in range(num_test):
+        result = calculate(task['test'][i]['input'], info)
         results.add(id, result)
         # task['test'][0]['output'] = result
-    else:
-        for i in range(num_test):
-            result = calculate(task['test'][i]['input'], info)
-            results.add(id, result)
-            # task['test'][0]['output'] = result
 
 
 # def flattener(pred):
@@ -70,6 +65,7 @@ def process_task(id, task, operations, results):
 
 if __name__ == "__main__":
     results = new Results()
+
     operations = []#todo
     for task in taskfilter.filter_tasks_by_number_of_colors(config.training_tasks,0,2,True):
 
