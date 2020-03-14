@@ -28,6 +28,12 @@ def calculate(input, info, operations):
         results.append(output)
     return results
 
+def equals(self, output):
+    for i in range(len(self)):
+        for j in range(len(self[i])):
+            if self[i][j] != output[i][j]:
+                return False
+    return True
 
 def process_input_output(info, input, output):
     input.get_objects()
