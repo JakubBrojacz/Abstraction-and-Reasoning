@@ -8,21 +8,16 @@ class Operation:
     pass#todo
 
 
-class Information:
-    pass#todo
-
-
 class Results:
     pass#todo
 
 
-def calculate(input, info, operations):
+def calculate(input, paths):
     input.get_objects()
     results = []
-    paths = info.get_paths()
-    for operations in paths:
+    for path in paths:
         output = copy.deepcopy(input)
-        for operation in operations:
+        for operation in path:
             output = operation.exec(output)
         results.append(output)
     return results
@@ -34,7 +29,7 @@ def equals(self, output):
                 return False
     return True
 
-def process_input_output(info, input, output):
+def process_input_output(input, output, operations, paths):
     input.get_objects()
     output.get_objects()
     num_divisions = len(input.objects)
@@ -42,19 +37,19 @@ def process_input_output(info, input, output):
         for op1 in operations:
             for op2 in operations:
                 if op2.exec(op1.exec(input)).equals(output)
-                    info.add_path([op1, op2])
+                    paths.append([op1, op2])
 
 
 def process_task(id, task, operations, results):
-    info = new Information()
+    paths = []
 
     num_train = len(task['train'])
     for i in range(num_train):
-        process_input_output(task['train'][i]['input'], task['train'][i]['output'], info, operations)
+        process_input_output(task['train'][i]['input'], task['train'][i]['output'], operations, paths)
 
     num_test = len(task['test'])
     for i in range(num_test):
-        result = calculate(task['test'][i]['input'], info)
+        result = calculate(task['test'][i]['input'], paths)
         results.add(id, result)
         # task['test'][0]['output'] = result
 
