@@ -2,14 +2,11 @@ import copy
 import json
 
 import config
+import results
 import visualize
 import taskfilter
 
 class Operation:
-    pass#todo
-
-
-class Results:
     pass#todo
 
 
@@ -35,13 +32,19 @@ def process_input_output(input, output, operations, paths):
     output.get_objects()
     num_divisions = len(input.objects)
     for i in range(num_divisions):
+        if len(paths) >= 3:
+            break
         for op1 in operations:
+            if len(paths) >= 3:
+                break
             for op2 in operations:
-                if op2.exec(op1.exec(input)).equals(output)
+                if len(paths) >= 3:
+                    break
+                if op2.exec(op1.exec(input)).equals(output):
                     paths.append([op1, op2])
 
 
-def process_task(id, task, operations, results):
+def process_task(file_path, task, operations, results):
     paths = []
 
     num_train = len(task['train'])
@@ -51,17 +54,8 @@ def process_task(id, task, operations, results):
     num_test = len(task['test'])
     for i in range(num_test):
         result = calculate(task['test'][i]['input'], paths)
-        results.add(id, result)
+        add_results(results, file_path, i, result)
         # task['test'][0]['output'] = result
-
-
-# def flattener(pred):
-#     str_pred = str([row for row in pred])
-#     str_pred = str_pred.replace(', ', '')
-#     str_pred = str_pred.replace('[[', '|')
-#     str_pred = str_pred.replace('][', '|')
-#     str_pred = str_pred.replace(']]', '|')
-#     return str_pred
 
 
 if __name__ == "__main__":
@@ -74,4 +68,4 @@ if __name__ == "__main__":
         # process_task(config.training_tasks[i], task, operations, results)
         # print(task)
         visualize.plot_task(task)
-    results.save('submission.csv')
+    save_results(results, 'submission.csv')
