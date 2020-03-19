@@ -62,22 +62,10 @@ def plot_array(task):
     plt.tight_layout()
     plt.show()
 
-class NumpyArrayEncoder(JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, numpy.ndarray):
-            return obj.tolist()
-        return JSONEncoder.default(self, obj)
 
 def plot_output(output):
-    numpyArray = numpy.array(output)
-    numpyData = {"test": [{"output": numpyArray}]}
-
-    with open("numpyData.json", "w") as write_file:
-        json.dump(numpyData, write_file, cls=NumpyArrayEncoder)
-
-    with open("numpyData.json", 'r') as f:
-            task = json.load(f)
-
+    data = {"test": [{"output": output}]}
+    task = json.dumps(data)
     plot_array(task)
 
 if __name__ == "__main__":
