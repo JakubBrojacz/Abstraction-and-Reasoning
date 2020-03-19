@@ -2,6 +2,7 @@ import json
 
 import config
 import visualize
+import taskfilter
 
 
 def process_task(task):
@@ -9,12 +10,7 @@ def process_task(task):
 
 
 if __name__ == "__main__":
-    for i in range(len(config.training_tasks)):
-        with open(config.training_tasks[i], 'r') as f:
-            task = json.load(f)
-
-        print(i)
-        print(config.training_tasks[i])
+    for task in taskfilter.filter_tasks_by_number_of_colors(config.training_tasks,0,2,True):
         # process_task(task)
         # print(task)
-        visualize.plot_task(task)
+        visualize.plot_task(task) 
