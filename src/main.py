@@ -1,5 +1,4 @@
 import copy
-import json
 
 import config
 import save
@@ -8,7 +7,7 @@ import taskfilter
 
 
 class Operation:
-    pass#todo
+    pass  # TODO
 
 
 def calculate(input, paths):
@@ -59,14 +58,15 @@ def process_task(file_path, task, operations, results):
 
 
 if __name__ == "__main__":
-    results = new Results()
+    # results = Results()
 
-    operations = []#todo
-    for task in taskfilter.filter_tasks_by_number_of_colors(config.training_tasks,0,2,True):
+    operations = []  # TODO
+    for task in taskfilter.filter_tasks_by_number_of_colors(
+            config.training_tasks, 0, 2, True):
 
         print(task)
 
         # process_task(config.training_tasks[i], task, operations, results)
         # print(task)
         visualize.plot_task(task)
-    save.save_results(results, 'submission.csv')
+    # save.save_results(results, 'submission.csv')

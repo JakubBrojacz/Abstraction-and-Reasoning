@@ -1,8 +1,3 @@
-# import numpy as np
-# import pandas as pd
-
-import numpy
-from json import JSONEncoder
 import json
 
 import matplotlib.pyplot as plt
@@ -67,6 +62,7 @@ def plot_output(output):
     data = {"test": [{"output": output}]}
     task = json.dumps(data)
     plot_array(task)
+
 
 if __name__ == "__main__":
     for i in range(len(config.training_tasks)):
