@@ -65,6 +65,7 @@ if __name__ == "__main__":
     for task in taskfilter.filter_tasks_by_number_of_colors(config.training_tasks,0,2,True):
 
         print(task)
+
         # process_task(config.training_tasks[i], task, operations, results)
         # print(task)
         visualize.plot_task(task)
