@@ -58,8 +58,7 @@ def process_task(file_path, task, operations, results):
 
 
 if __name__ == "__main__":
-    # results = Results()
-
+    results = []
     operations = []  # TODO
     for task in taskfilter.filter_tasks_by_number_of_colors(
             config.training_tasks, 0, 2, True):
