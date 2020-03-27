@@ -1,6 +1,3 @@
-# import numpy as np
-# import pandas as pd
-
 import json
 
 import matplotlib.pyplot as plt
@@ -50,6 +47,21 @@ def plot_task(task):
             plot_one(axs[1, i], task, i, 'test', 'output')
     plt.tight_layout()
     plt.show()
+
+
+def plot_array(task):
+    num_train = len(task['test'])
+    fig, axs = plt.subplots(1, num_train, figsize=(3*num_train, 3*1))
+    for i in range(num_train):
+        plot_one(axs[0, i], task, i, 'test', 'output')
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_output(output):
+    data = {"test": [{"output": output}]}
+    task = json.dumps(data)
+    plot_array(task)
 
 
 if __name__ == "__main__":
