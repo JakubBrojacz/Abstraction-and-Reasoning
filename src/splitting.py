@@ -1,14 +1,13 @@
-class Element:
-    def __init__(self, matrix, pos, color):
-        self.matrix = [[value for value in row] for row in matrix]
-        self.pos = (pos[0], pos[1])
-        self.color = color
+import element
 
 
-def get_objects(matrix,
-                backgroundColor=0,
-                numberOfColors=10,
-                transparentColor=10):
+SPLITTING_TYPES = 5
+
+
+def get_elements(matrix,
+                 backgroundColor=0,
+                 numberOfColors=10,
+                 transparentColor=10):
     divisions = []
     divisions.append(split_only_by_color(
         matrix, backgroundColor, transparentColor, numberOfColors))
@@ -79,7 +78,7 @@ def split_only_by_color(matrix,
     for i in range(numberOfColors):
         if i != backgroundColor and isColor[i]:
             listOfElements.append(
-                Element(matrices[i], leftUpCornerElementFrame[i], i))
+                element.Element(matrices[i], leftUpCornerElementFrame[i], i))
 
     return listOfElements
 
@@ -162,8 +161,8 @@ def split(matrix, backgroundColor, transparentColor,
                 else:
                     colorOfElement = None
                 listOfElements.append(
-                    Element(elementMatrix, leftUpCornerElementFrame,
-                            colorOfElement))
+                    element.Element(elementMatrix, leftUpCornerElementFrame,
+                                    colorOfElement))
 
     return listOfElements
 
