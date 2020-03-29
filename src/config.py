@@ -1,7 +1,8 @@
 from pathlib import Path
 
 data_path = Path('data/')
-training_path = data_path / 'training'
+training_path = data_path / 'training_sample'
+# training_path = data_path / 'training'
 evaluation_path = data_path / 'evaluation'
 test_path = data_path / 'test'
 
