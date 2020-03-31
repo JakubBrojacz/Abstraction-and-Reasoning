@@ -6,7 +6,12 @@ import taskfilter
 import board
 
 from splitting import SPLITTING_TYPES
+from enum import Enum
 
+class ProcessingStrategy(Enum):
+    FIRST_ONLY = 1
+    FIRST_THEN_OTHERS = 2
+    ONE_BY_ONE = 3
 
 class Operation:
     pass  # TODO
@@ -22,23 +27,72 @@ def calculate(input_board, paths):
         results.append(output_board)
     return results
 
-
-def process_input_output(input_board, output_board, operations):
+def get_paths_for_input_output_by_operations(input_board, output_board, operations, max_matches=sys.max_int):
     paths = []
+    matches = 0
     for op1 in operations:
-        # print(op1)
-        # print(input_board)
         for result1, args1 in op1.try_run(input_board):
+            #if result1.equals(output_board):
+            #    paths.append([
+            #    (op1, args1)
+            #    ])
+            #    matches+=1
+            #    if(matches>=max_matches):
+            #        return paths
             for op2 in operations:
+                if op1 == op2: #TODO check czy matchuje
+                    continue
                 for result2, args2 in op2.try_run(result1):
                     if result2.equals(output_board):
                         paths.append([
                             (op1, args1),
                             (op2, args2)
                         ])
-                    # if len(paths) >= 3:
-                    #     return paths
+                        matches+=1
+                        if(matches>=max_matches):
+                            return paths
     return paths
+
+def get_paths_for_input_output_set_by_operations(sets, operations, max_matches=sys.max_int):
+    paths = []
+    matches = 0
+    for op1 in operations:
+        for result1, args1 in op1.try_run(sets[0][0]):
+            for op2 in operations:
+                if op1 == op2: #TODO check czy matchuje
+                    continue
+                for result2, args2 in op2.try_run(result1):
+                    if result2.equals(sets[0][1]):
+                        path = [
+                            (op1, args1),
+                            (op2, args2)
+                        ]
+                        matched = True
+                        for i in range (1, length(sets)):
+                            if not is_path_transforming_input_to_output(sets[i][0],sets[i][1],path):
+                                matched = False
+                                break
+                        if matched:
+                            paths.append()
+                            matches+=1
+                            if(matches>=max_matches):
+                                return paths
+    return paths
+
+def get_paths_for_input_output_by_paths(input_board, output_board, input_paths):
+    output_paths = []
+    for path in input_paths:
+        if is_path_transforming_input_to_output(input_board, output_board, path):
+            output_paths.append(path)
+    return output_paths
+
+def is_path_transforming_input_to_output(input_board, output_board, path):
+    processed_board = input_board.copy()
+    for transformation in path:
+        processed_board = transformation[0].run(processed_board,transformation[1])
+    if(processed_board.equals(output_board)):
+        return True
+    return False
 
 
 def common(paths):
@@ -75,7 +129,7 @@ def set_split_type(task, split_type):
         test_task['input'].set_split_type(split_type)
 
 
-def process_task(file_path, task, operations, results):
+def process_task(file_path, task, operations, results, strategy):
     num_train = len(task['train'])
     prepare_task(task)
 
@@ -84,18 +138,35 @@ def process_task(file_path, task, operations, results):
         # print(task)
         set_split_type(task, split_type)
 
-        paths = [[] for i in range(num_train)]
+        if strategy == ProcessingStrategy.FIRST_ONLY:
+            paths = process_input_output_all_operations(
+                    task['train'][0]['input'],
+                    task['train'][0]['output'],
+                    operations, 3)
 
-        for i in range(num_train):
-            paths[i] = process_input_output(
-                task['train'][i]['input'],
-                task['train'][i]['output'],
-                operations)
+        elif strategy == ProcessingStrategy.FIRST_THEN_OTHERS:
+            paths = paths = process_input_output_all_operations(
+                    task['train'][0]['input'],
+                    task['train'][0]['output'],
+                    operations)
+
+            for i in range(1, length(num_train)-1):
+                paths = get_input_output_matching_paths(
+                    task['train'][i]['input'],
+                    task['train'][i]['output'],
+                    paths)
+
+        elif strategy == ProcessingStrategy.ONE_BY_ONE:
+            sets = [[] for in_out in task['train']]
+            for i in range(task['train']):
+                sets[i]=(task['train'][i]['input'],
+                         task['train'][i]['output'])
+            paths = get_paths_for_input_output_set_by_operations(sets,operations,3)
 
         # if len(paths[0]) > 0:
         # print(paths)
 
-        paths = common(paths)
+        paths = paths[0:3]
 
         num_test = len(task['test'])
         for i in range(num_test):
