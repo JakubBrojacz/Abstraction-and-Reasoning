@@ -29,20 +29,15 @@ def calculate(input_board, paths):
     return results
 
 def get_paths_for_input_output_by_operations(input_board, output_board, operations, max_matches=sys.maxsize):
+    '''
+    input: input and output boards, list of operations, maximum number of paths returned
+    output: list of no more than max_matches paths that transform input board to output
+    '''
     paths = []
     matches = 0
     for op1 in operations:
         for result1, args1 in op1.try_run(input_board):
-            #if result1.equals(output_board):
-            #    paths.append([
-            #    (op1, args1)
-            #    ])
-            #    matches+=1
-            #    if(matches>=max_matches):
-            #        return paths
             for op2 in operations:
-                if op1 == op2: #TODO check czy matchuje
-                    continue
                 for result2, args2 in op2.try_run(result1):
                     if result2.equals(output_board):
                         paths.append([
@@ -55,13 +50,16 @@ def get_paths_for_input_output_by_operations(input_board, output_board, operatio
     return paths
 
 def get_paths_for_input_output_set_by_operations(sets, operations, max_matches=sys.maxsize):
+    '''
+    input: sets of input and output boards, list of operations, maximum number of paths returned
+    output: list of no more than max_matches paths that transform each input from set to its output
+    remark: first one path is created, then checked for all input-outputs in the set
+    '''
     paths = []
     matches = 0
     for op1 in operations:
         for result1, args1 in op1.try_run(sets[0][0]):
             for op2 in operations:
-                if op1 == op2: #TODO check czy matchuje
-                    continue
                 for result2, args2 in op2.try_run(result1):
                     if result2.equals(sets[0][1]):
                         path = [
@@ -74,13 +72,17 @@ def get_paths_for_input_output_set_by_operations(sets, operations, max_matches=s
                                 matched = False
                                 break
                         if matched:
-                            paths.append()
+                            paths.append(path)
                             matches+=1
                             if(matches>=max_matches):
                                 return paths
     return paths
 
 def get_paths_for_input_output_by_paths(input_board, output_board, input_paths):
+    '''
+    input: input board, output board, list of paths
+    output: sublist of input list with paths that transform input to output
+    '''
     output_paths = []
     for path in input_paths:
         if is_path_transforming_input_to_output(input_board, output_board, path):
@@ -88,23 +90,16 @@ def get_paths_for_input_output_by_paths(input_board, output_board, input_paths):
     return output_paths
 
 def is_path_transforming_input_to_output(input_board, output_board, path):
+    '''
+    input: input board, output board, path for calculation
+    output: boolean value stating whether output was achieved from input via specified path
+    '''
     processed_board = input_board.copy()
-    for transformation in path:
-        processed_board = transformation[0].run(processed_board,transformation[1])
+    for operation, args in path:
+        processed_board = operation.run(processed_board,args)
     if(processed_board.equals(output_board)):
         return True
     return False
-
-
-def common(paths):
-    '''
-    input: list of (lists of paths to solve training task)
-        for each training taks
-    output: list of most common paths
-    '''
-    # TODO
-    return paths[0]
-
 
 def prepare_task(task):
     '''
@@ -159,7 +154,7 @@ def process_task(file_path, task, operations, results, strategy):
 
         elif strategy == ProcessingStrategy.ONE_BY_ONE:
             sets = [[] for in_out in task['train']]
-            for i in range(task['train']):
+            for i in range(len(task['train'])):
                 sets[i]=(task['train'][i]['input'],
                          task['train'][i]['output'])
             paths = get_paths_for_input_output_set_by_operations(sets,operations,3)
@@ -187,12 +182,11 @@ if __name__ == "__main__":
         i += 1
         print(i)
         # print(task)
-        print('First only');
+
         process_task("path", task, operations, results, ProcessingStrategy.FIRST_ONLY)
-        print('First then others');
-        process_task("path", task, operations, results, ProcessingStrategy.FIRST_THEN_OTHERS)
-        print('One by one');
-        process_task("path", task, operations, results, ProcessingStrategy.ONE_BY_ONE)
+        # process_task("path", task, operations, results, ProcessingStrategy.FIRST_THEN_OTHERS)
+        # process_task("path", task, operations, results, ProcessingStrategy.ONE_BY_ONE)
+
         # print(task)
         # visualize.plot_task(task)
     # save.save_results(results, 'submission.csv')
