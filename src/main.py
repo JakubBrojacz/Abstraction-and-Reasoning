@@ -4,6 +4,7 @@ from operations import move
 # import visualize
 import taskfilter
 import board
+import sys
 
 from splitting import SPLITTING_TYPES
 from enum import Enum
@@ -27,7 +28,7 @@ def calculate(input_board, paths):
         results.append(output_board)
     return results
 
-def get_paths_for_input_output_by_operations(input_board, output_board, operations, max_matches=sys.max_int):
+def get_paths_for_input_output_by_operations(input_board, output_board, operations, max_matches=sys.maxsize):
     paths = []
     matches = 0
     for op1 in operations:
@@ -53,7 +54,7 @@ def get_paths_for_input_output_by_operations(input_board, output_board, operatio
                             return paths
     return paths
 
-def get_paths_for_input_output_set_by_operations(sets, operations, max_matches=sys.max_int):
+def get_paths_for_input_output_set_by_operations(sets, operations, max_matches=sys.maxsize):
     paths = []
     matches = 0
     for op1 in operations:
@@ -68,7 +69,7 @@ def get_paths_for_input_output_set_by_operations(sets, operations, max_matches=s
                             (op2, args2)
                         ]
                         matched = True
-                        for i in range (1, length(sets)):
+                        for i in range (1, len(sets)):
                             if not is_path_transforming_input_to_output(sets[i][0],sets[i][1],path):
                                 matched = False
                                 break
@@ -139,18 +140,18 @@ def process_task(file_path, task, operations, results, strategy):
         set_split_type(task, split_type)
 
         if strategy == ProcessingStrategy.FIRST_ONLY:
-            paths = process_input_output_all_operations(
+            paths = get_paths_for_input_output_by_operations(
                     task['train'][0]['input'],
                     task['train'][0]['output'],
                     operations, 3)
 
         elif strategy == ProcessingStrategy.FIRST_THEN_OTHERS:
-            paths = paths = process_input_output_all_operations(
+            paths = paths = get_paths_for_input_output_by_operations(
                     task['train'][0]['input'],
                     task['train'][0]['output'],
                     operations)
 
-            for i in range(1, length(num_train)-1):
+            for i in range(1, num_train-1):
                 paths = get_input_output_matching_paths(
                     task['train'][i]['input'],
                     task['train'][i]['output'],
@@ -186,8 +187,12 @@ if __name__ == "__main__":
         i += 1
         print(i)
         # print(task)
-
-        process_task("path", task, operations, results)
+        print('First only');
+        process_task("path", task, operations, results, ProcessingStrategy.FIRST_ONLY)
+        print('First then others');
+        process_task("path", task, operations, results, ProcessingStrategy.FIRST_THEN_OTHERS)
+        print('One by one');
+        process_task("path", task, operations, results, ProcessingStrategy.ONE_BY_ONE)
         # print(task)
         # visualize.plot_task(task)
     # save.save_results(results, 'submission.csv')
