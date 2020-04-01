@@ -10,9 +10,9 @@ from splitting import SPLITTING_TYPES
 from enum import Enum
 
 class ProcessingStrategy(Enum):
-    FIRST_ONLY = 1
-    FIRST_THEN_OTHERS = 2
-    ONE_BY_ONE = 3
+    FIRST_ONLY = 1         # returns paths for the first input output only
+    FIRST_THEN_OTHERS = 2  # gets paths for the first input output, then evaluates for others
+    ONE_BY_ONE = 3         # generate one path, check for all input outputs, repeat for the next path
 
 class Operation:
     pass  # TODO
@@ -141,7 +141,7 @@ def process_task(file_path, task, operations, results, strategy):
                     operations, 3)
 
         elif strategy == ProcessingStrategy.FIRST_THEN_OTHERS:
-            paths = paths = get_paths_for_input_output_by_operations(
+            paths = get_paths_for_input_output_by_operations(
                     task['train'][0]['input'],
                     task['train'][0]['output'],
                     operations)
