@@ -146,8 +146,8 @@ def process_task(file_path, task, operations, results, strategy):
                     task['train'][0]['output'],
                     operations)
 
-            for i in range(1, num_train-1):
-                paths = get_input_output_matching_paths(
+            for i in range(1, num_train):
+                paths = get_paths_for_input_output_by_paths(
                     task['train'][i]['input'],
                     task['train'][i]['output'],
                     paths)
@@ -183,8 +183,8 @@ if __name__ == "__main__":
         print(i)
         # print(task)
 
-        process_task("path", task, operations, results, ProcessingStrategy.FIRST_ONLY)
-        # process_task("path", task, operations, results, ProcessingStrategy.FIRST_THEN_OTHERS)
+        # process_task("path", task, operations, results, ProcessingStrategy.FIRST_ONLY)
+        process_task("path", task, operations, results, ProcessingStrategy.FIRST_THEN_OTHERS)
         # process_task("path", task, operations, results, ProcessingStrategy.ONE_BY_ONE)
 
         # print(task)
