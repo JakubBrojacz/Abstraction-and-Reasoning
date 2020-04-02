@@ -10,9 +10,9 @@ from splitting import SPLITTING_TYPES
 from enum import Enum
 
 class ProcessingStrategy(Enum):
-    FIRST_ONLY = 1         # returns paths for the first input output only
-    FIRST_THEN_OTHERS = 2  # gets paths for the first input output, then evaluates for others
-    ONE_BY_ONE = 3         # generate one path, check for all input outputs, repeat for the next path
+    FIRST_ONLY = 1         # returns paths for the first input output only, no more than 3
+    FIRST_THEN_OTHERS = 2  # gets paths for the first input output (maybe more than 3), then evaluates for others
+    ONE_BY_ONE = 3         # generate one path, check for all input outputs, repeat for the next path, no more than 3 correct paths
 
 class Operation:
     pass  # TODO
@@ -168,6 +168,13 @@ def process_task(file_path, task, operations, results, strategy):
         for i in range(num_test):
             result_boards = calculate(task['test'][i]['input'], paths)
             print(result_boards)
+
+            correct_results = 0
+            for j in range(len(result_boards)):
+                if result_boards[j].matrix == task['test'][i]['output']:
+                    correct_results = correct_results + 1
+            print(correct_results,'out of',len(result_boards),'results were correct')
+
             # save.add_results(results, file_path, i, result_board)
             # task['test'][0]['output'] = result
 
@@ -184,8 +191,8 @@ if __name__ == "__main__":
         # print(task)
 
         # process_task("path", task, operations, results, ProcessingStrategy.FIRST_ONLY)
-        process_task("path", task, operations, results, ProcessingStrategy.FIRST_THEN_OTHERS)
-        # process_task("path", task, operations, results, ProcessingStrategy.ONE_BY_ONE)
+        # process_task("path", task, operations, results, ProcessingStrategy.FIRST_THEN_OTHERS)
+        process_task("path", task, operations, results, ProcessingStrategy.ONE_BY_ONE)
 
         # print(task)
         # visualize.plot_task(task)
