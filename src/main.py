@@ -5,6 +5,7 @@ from operations import move
 # import visualize
 import taskfilter
 import board
+import json
 
 from splitting import SPLITTING_TYPES
 from strategy import ProcessingStrategy
@@ -188,9 +189,16 @@ if __name__ == "__main__":
     results = []
     operations = [move.Move]  # TODO
     i = 0
-    for task in taskfilter.filter_tasks_by_number_of_colors(
-            config.training_tasks, 0, 2, True):
 
+    tasks = []
+    for path in config.training_tasks:
+        with open(path, 'r') as file:
+            tasks.append(json.load(file))
+
+    tasks = taskfilter.filter_tasks_by_max_board_area(tasks, config.max_board_area)
+    tasks = taskfilter.filter_tasks_by_number_of_colors(tasks, config.min_colors, config.max_colors, config.must_have_black)
+
+    for task in tasks:
         i += 1
         print('Task ', i, ': ', sep='', end='')
         # print(task)
