@@ -2,16 +2,13 @@ import sys
 import config
 # import save
 from operations import move
-# import visualize
+import visualize  # noqa
 import taskfilter
 import board
 import json
 
 from splitting import SPLITTING_TYPES
 from strategy import ProcessingStrategy
-
-class Operation:
-    pass  # TODO
 
 
 def calculate(input_board, paths):
@@ -24,11 +21,14 @@ def calculate(input_board, paths):
         results.append(output_board)
     return results
 
+
 def get_paths_for_input_output_by_operations(
         input_board, output_board, operations, max_matches=sys.maxsize):
     '''
-    input: input and output boards, list of operations, maximum number of paths returned
-    output: list of no more than max_matches paths that transform input board to output
+    input: input and output boards, list of operations,
+        maximum number of paths returned
+    output: list of no more than max_matches paths that transform
+        input board to output
     '''
     paths = []
     matches = 0
@@ -55,11 +55,16 @@ def get_paths_for_input_output_by_operations(
                             return paths
     return paths
 
-def get_paths_for_input_output_set_by_operations(sets, operations, max_matches=sys.maxsize):
+
+def get_paths_for_input_output_set_by_operations(sets, operations,
+                                                 max_matches=sys.maxsize):
     '''
-    input: sets of input and output boards, list of operations, maximum number of paths returned
-    output: list of no more than max_matches paths that transform each input from set to its output
-    remark: first one path is created, then checked for all input-outputs in the set
+    input: sets of input and output boards, list of operations,
+        maximum number of paths returned
+    output: list of no more than max_matches paths that transform
+        each input from set to its output
+    remark: first one path is created, then checked for all input-outputs
+        in the set
     '''
     paths = []
     matches = 0
@@ -71,7 +76,8 @@ def get_paths_for_input_output_set_by_operations(sets, operations, max_matches=s
                 ]
                 matched = True
                 for i in range(1, len(sets)):
-                    if not is_path_transforming_input_to_output(sets[i][0], sets[i][1], path):
+                    if not is_path_transforming_input_to_output(
+                            sets[i][0], sets[i][1], path):
                         matched = False
                         break
                 if matched:
@@ -101,10 +107,12 @@ def get_paths_for_input_output_set_by_operations(sets, operations, max_matches=s
                                 return paths
     return paths
 
+
 def is_path_transforming_input_to_output(input_board, output_board, path):
     '''
     input: input board, output board, path for calculation
-    output: boolean value stating whether output was achieved from input via specified path
+    output: boolean value stating whether output was achieved from input
+        via specified path
     '''
     processed_board = input_board.copy()
     for operation, args in path:
@@ -112,6 +120,7 @@ def is_path_transforming_input_to_output(input_board, output_board, path):
     if processed_board.equals(output_board):
         return True
     return False
+
 
 def prepare_task(task):
     '''
@@ -138,7 +147,6 @@ def set_split_type(task, split_type):
 
 
 def process_task(file_path, task, operations, results, strategy):
-    num_train = len(task['train'])
     prepare_task(task)
 
     num_test = len(task['test'])
@@ -185,6 +193,7 @@ def process_task(file_path, task, operations, results, strategy):
     print(passed_tests, '/', num_test, ' tests passed with ',
           correct_results, '/', total_results, ' correct boards ', sep='')
 
+
 if __name__ == "__main__":
     results = []
     operations = [move.Move]  # TODO
@@ -195,16 +204,19 @@ if __name__ == "__main__":
         with open(path, 'r') as file:
             tasks.append(json.load(file))
 
-    tasks = taskfilter.filter_tasks_by_max_board_area(tasks, config.max_board_area)
-    tasks = taskfilter.filter_tasks_by_number_of_colors(tasks, config.min_colors, config.max_colors, config.must_have_black)
+    tasks = taskfilter.filter_tasks_by_max_board_area(
+        tasks, config.max_board_area)
+    tasks = taskfilter.filter_tasks_by_number_of_colors(
+        tasks, config.min_colors, config.max_colors, config.must_have_black)
 
     for task in tasks:
         i += 1
         print('Task ', i, ': ', sep='', end='')
         # print(task)
 
-        process_task("path", task, operations, results, config.processing_strategy)
+        # visualize.plot_task(task)
+        process_task("path", task, operations, results,
+                     config.processing_strategy)
 
         # print(task)
-        # visualize.plot_task(task)
     # save.save_results(results, 'submission.csv')
