@@ -4,12 +4,11 @@ from board import Board
 
 class Move(Operation):
     @classmethod
-    def run(cls, board: Board, args):
-        board_copy = board.copy()
-        element = board_copy.elements[args["element"]]
+    def run_operation(cls, board: Board, args):
+        element = board.elements[args["element"]]
         element.pos = (element.pos[0]+args["x"],
                        element.pos[1]+args["y"])
-        return board_copy.redraw()
+        return board
 
     @classmethod
     def gen_args(cls, board):

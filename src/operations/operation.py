@@ -1,7 +1,13 @@
 class Operation:
     @classmethod
-    def run(cls, board, args):
+    def run_operation(cls, board, args):
         pass
+
+    @classmethod
+    def run(cls, board, args):
+        board_copy = board.copy()
+        board_copy = cls.run_operation(board_copy, args)
+        return board_copy.redraw()
 
     @classmethod
     def gen_args(cls, board):
