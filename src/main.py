@@ -1,4 +1,3 @@
-import sys
 import config
 # import save
 from operations import move
@@ -6,6 +5,7 @@ import visualize  # noqa
 import taskfilter
 import board
 import json
+import strategies
 
 from splitting import SPLITTING_TYPES
 from strategy import ProcessingStrategy
@@ -20,106 +20,6 @@ def calculate(input_board, paths):
             output_board = operation.run(output_board, args)
         results.append(output_board)
     return results
-
-
-def get_paths_for_input_output_by_operations(
-        input_board, output_board, operations, max_matches=sys.maxsize):
-    '''
-    input: input and output boards, list of operations,
-        maximum number of paths returned
-    output: list of no more than max_matches paths that transform
-        input board to output
-    '''
-    paths = []
-    matches = 0
-    for op1 in operations:
-        for result1, args1 in op1.try_run(input_board):
-            if result1.equals(output_board):
-                paths.append([
-                    (op1, args1)
-                ])
-                matches += 1
-                if matches >= max_matches:
-                    return paths
-            for op2 in operations:
-                if op1 == op2:
-                    continue
-                for result2, args2 in op2.try_run(result1):
-                    if result2.equals(output_board):
-                        paths.append([
-                            (op1, args1),
-                            (op2, args2)
-                        ])
-                        matches += 1
-                        if matches >= max_matches:
-                            return paths
-    return paths
-
-
-def get_paths_for_input_output_set_by_operations(sets, operations,
-                                                 max_matches=sys.maxsize):
-    '''
-    input: sets of input and output boards, list of operations,
-        maximum number of paths returned
-    output: list of no more than max_matches paths that transform
-        each input from set to its output
-    remark: first one path is created, then checked for all input-outputs
-        in the set
-    '''
-    paths = []
-    matches = 0
-    for op1 in operations:
-        for result1, args1 in op1.try_run(sets[0][0]):
-            if result1.equals(sets[0][1]):
-                path = [
-                    (op1, args1)
-                ]
-                matched = True
-                for i in range(1, len(sets)):
-                    if not is_path_transforming_input_to_output(
-                            sets[i][0], sets[i][1], path):
-                        matched = False
-                        break
-                if matched:
-                    paths.append(path)
-                    matches += 1
-                    if matches >= max_matches:
-                        return paths
-            for op2 in operations:
-                if op1 == op2:
-                    continue
-                for result2, args2 in op2.try_run(result1):
-                    if result2.equals(sets[0][1]):
-                        path = [
-                            (op1, args1),
-                            (op2, args2)
-                        ]
-                        matched = True
-                        for i in range(1, len(sets)):
-                            if not is_path_transforming_input_to_output(
-                                    sets[i][0], sets[i][1], path):
-                                matched = False
-                                break
-                        if matched:
-                            paths.append(path)
-                            matches += 1
-                            if matches >= max_matches:
-                                return paths
-    return paths
-
-
-def is_path_transforming_input_to_output(input_board, output_board, path):
-    '''
-    input: input board, output board, path for calculation
-    output: boolean value stating whether output was achieved from input
-        via specified path
-    '''
-    processed_board = input_board.copy()
-    for operation, args in path:
-        processed_board = operation.run(processed_board, args)
-    if processed_board.equals(output_board):
-        return True
-    return False
 
 
 def prepare_task(task):
@@ -146,6 +46,23 @@ def set_split_type(task, split_type):
         test_task['input'].set_split_type(split_type)
 
 
+def show_results(task, result_boards):
+    correct_results = 0
+    total_results = 0
+    passed_tests = 0
+    for result_board, test_case in zip(result_boards, task['test']):
+        test_passed = False
+        for try_board in result_board:
+            total_results += 1
+            if try_board.matrix == test_case['output']:
+                correct_results += 1
+                test_passed = True
+        if test_passed:
+            passed_tests += 1
+    print(f'{passed_tests}/{len(task["test"])} tests passed with '
+          f'{correct_results}/{total_results} correct boards ')
+
+
 def process_task(file_path, task, operations, results, strategy):
     prepare_task(task)
 
@@ -156,19 +73,7 @@ def process_task(file_path, task, operations, results, strategy):
     for split_type in range(SPLITTING_TYPES):
         set_split_type(task, split_type)
 
-        if strategy == ProcessingStrategy.FIRST_ONLY:
-            paths = get_paths_for_input_output_by_operations(
-                task['train'][0]['input'],
-                task['train'][0]['output'],
-                operations, remaining_result_boards)
-
-        elif strategy == ProcessingStrategy.ONE_BY_ONE:
-            sets = [[] for in_out in task['train']]
-            for i in range(len(task['train'])):
-                sets[i] = (task['train'][i]['input'],
-                           task['train'][i]['output'])
-            paths = get_paths_for_input_output_set_by_operations(
-                sets, operations, remaining_result_boards)
+        paths = strategy.solve(task, operations, remaining_result_boards)
 
         for i in range(num_test):
             result_boards[i].extend(calculate(task['test'][i]['input'], paths))
@@ -178,26 +83,20 @@ def process_task(file_path, task, operations, results, strategy):
         if remaining_result_boards <= 0:
             break
 
-    correct_results = 0
-    total_results = 0
-    passed_tests = 0
-    for i in range(num_test):
-        test_passed = False
-        for j in range(len(result_boards[i])):
-            total_results += 1
-            if result_boards[i][j].matrix == task['test'][i]['output']:
-                correct_results += 1
-                test_passed = True
-        if test_passed:
-            passed_tests += 1
-    print(passed_tests, '/', num_test, ' tests passed with ',
-          correct_results, '/', total_results, ' correct boards ', sep='')
+    show_results(task, result_boards)
 
 
 if __name__ == "__main__":
     results = []
     operations = [move.Move]  # TODO
     i = 0
+
+    if config.processing_strategy == ProcessingStrategy.FIRST_ONLY:
+        strategy = strategies.first_only.FirstOnlyStrategy()
+    elif config.processing_strategy == ProcessingStrategy.ONE_BY_ONE:
+        strategy = strategies.one_by_one.OneByOneStrategy()
+    else:
+        raise Exception("Bad strategy type")
 
     tasks = []
     for path in config.training_tasks:
@@ -216,7 +115,7 @@ if __name__ == "__main__":
 
         # visualize.plot_task(task)
         process_task("path", task, operations, results,
-                     config.processing_strategy)
+                     strategy)
 
         # print(task)
     # save.save_results(results, 'submission.csv')

@@ -14,8 +14,10 @@ class Move(Operation):
     @classmethod
     def gen_args(cls, board):
         for element in range(len(board.elements)):
-            for i in range(-board.height, board.height):
-                for j in range(-board.width, board.width):
+            # for i in range(-board.height, board.height):
+            #     for j in range(-board.width, board.width):
+            for i in [-1, 0, 1]:
+                for j in [-1, 0, 1]:
                     if validate_move(board, board.elements[element], i, j):
                         yield {
                             "x": i,
