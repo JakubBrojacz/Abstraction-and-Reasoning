@@ -1,10 +1,8 @@
 class OneByOneStrategy:
     def solve(self, task, operations, remaining_result_boards):
         self.max_matches = remaining_result_boards
-        sets = [[] for in_out in task['train']]
-        for i in range(len(task['train'])):
-            sets[i] = (task['train'][i]['input'],
-                       task['train'][i]['output'])
+        sets = [(training_case['input'],
+                 training_case['output']) for training_case in task['train']]
         return self.get_paths_for_input_output_set_by_operations(
             sets, operations)
 

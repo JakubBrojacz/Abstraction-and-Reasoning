@@ -102,6 +102,7 @@ if __name__ == "__main__":
     for path in config.training_tasks:
         with open(path, 'r') as file:
             tasks.append(json.load(file))
+            tasks[-1]["name"] = path
 
     tasks = taskfilter.filter_tasks_by_max_board_area(
         tasks, config.max_board_area)
@@ -110,10 +111,10 @@ if __name__ == "__main__":
 
     for task in tasks:
         i += 1
-        print('Task ', i, ': ', sep='', end='')
-        # print(task)
+        print(task["name"])
+        print(f'Task {i}: ', end='')
 
-        # visualize.plot_task(task)
+        visualize.plot_task(task)
         process_task("path", task, operations, results,
                      strategy)
 

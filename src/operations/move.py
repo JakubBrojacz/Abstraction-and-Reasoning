@@ -28,7 +28,7 @@ class Move(Operation):
 def validate_move(board, element, i, j):
     if element.pos[0]+i >= 0 and\
             element.pos[1] + j >= 0 and\
-            element.pos[0]+i+len(element.matrix) < board.height and\
-            element.pos[1]+j+len(element.matrix[0]) < board.width:
+            element.pos[0]+i+len(element.matrix) <= board.height and\
+            element.pos[1]+j+len(element.matrix[0]) <= board.width:
         return True
     return False
