@@ -1,6 +1,3 @@
-import splitting
-
-
 class Board:
     def __init__(self, matrix):
         self.matrix = [
@@ -8,23 +5,20 @@ class Board:
             for row in matrix]
         if len(self.matrix) == 0:
             raise Exception("BAD MATRIX")
-        self.divisions = None
-        self.split_type = 0
-        self.get_elements()
+        self.elements = None
+        self.element_group = None
 
     def copy(self):
         c = Board(self.matrix)
-        c.divisions = [
-            [element.copy() for element in division]
-            for division in self.divisions]
-        c.set_split_type(self.split_type)
+        c.elements = [element.copy() for element in self.elements]
         return c
 
-    def get_elements(self):
-        self.divisions = splitting.get_elements(self.matrix)
-
     def set_split_type(self, split_type):
-        self.split_type = split_type
+        self.elements = split_type.get_elements(self.matrix)
+
+    def set_element_group_type(self, element_group_type):
+        self.element_group = element_group_type.get_element_group(
+            self.matrix, self.elements)
 
     def equals(self, board2):
         if len(self.matrix) != len(board2.matrix):
@@ -68,7 +62,3 @@ class Board:
     @property
     def width(self):
         return len(self.matrix[0])
-
-    @property
-    def elements(self):
-        return self.divisions[self.split_type]

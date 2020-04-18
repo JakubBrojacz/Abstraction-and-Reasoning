@@ -1,22 +1,20 @@
-import config
-# import save
-# from operations import move
-import operations
-import visualize  # noqa
-import taskfilter
-import board
 import json
-import strategies
 
-from splitting import SPLITTING_TYPES
-from strategies.strategy import ProcessingStrategy
+import element_groups
+import taskfilter
+import strategies
+import operations
+import splitting
+import visualize  # noqa
+import config
+import board
+# import save
 
 
 def calculate(input_board, paths):
-    input_board.get_elements()
     results = []
     for path in paths:
-        output_board = input_board
+        output_board = input_board.copy()
         for operation, args in path:
             output_board = operation.run(output_board, args)
         results.append(output_board)
@@ -47,6 +45,15 @@ def set_split_type(task, split_type):
         test_task['input'].set_split_type(split_type)
 
 
+def set_element_group_type(task, element_group_type):
+    for train_task in task['train']:
+        train_task['input'].set_element_group_type(element_group_type)
+        train_task['output'].set_element_group_type(element_group_type)
+
+    for test_task in task['test']:
+        test_task['input'].set_element_group_type(element_group_type)
+
+
 def show_results(task, result_boards):
     correct_results = 0
     total_results = 0
@@ -64,40 +71,38 @@ def show_results(task, result_boards):
           f'{correct_results}/{total_results} correct boards ')
 
 
-def process_task(file_path, task, operation_list, results, strategy):
+def process_task(file_path, task, results,
+                 operation_list, splitting_types_list, strategy):
     prepare_task(task)
 
     num_test = len(task['test'])
     remaining_result_boards = config.max_result_boards
     result_boards = [[] for i in range(num_test)]
 
-    for split_type in range(SPLITTING_TYPES):
+    for split_type in splitting.SPLITTING_TYPES:
         set_split_type(task, split_type)
+        for element_group_type in element_groups.ELEMENT_GROUPS:
+            set_element_group_type(task, element_group_type)
 
-        paths = strategy.solve(task, operation_list, remaining_result_boards)
+            paths = strategy.solve(task,
+                                   operation_list,
+                                   remaining_result_boards)
 
-        for i in range(num_test):
-            result_boards[i].extend(calculate(task['test'][i]['input'], paths))
-            # save.add_results(results, file_path, i, result_board)
-            # task['test'][0]['output'] = result
-        remaining_result_boards -= len(paths)
-        if remaining_result_boards <= 0:
-            break
+            for i in range(num_test):
+                result_board = calculate(task['test'][i]['input'], paths)
+                result_boards[i].extend(result_board)
+                # save.add_results(results, file_path, i, result_board)
+                # task['test'][0]['output'] = result
+            remaining_result_boards -= len(paths)
+            if remaining_result_boards <= 0:
+                return result_boards
 
-    show_results(task, result_boards)
+    return result_boards
 
 
 if __name__ == "__main__":
     results = []
-    operation_list = [operations.Move]  # TODO
     i = 0
-
-    if config.processing_strategy == ProcessingStrategy.FIRST_ONLY:
-        strategy = strategies.first_only.FirstOnlyStrategy()
-    elif config.processing_strategy == ProcessingStrategy.ONE_BY_ONE:
-        strategy = strategies.one_by_one.OneByOneStrategy()
-    else:
-        raise Exception("Bad strategy type")
 
     tasks = []
     for path in config.training_tasks:
@@ -116,8 +121,11 @@ if __name__ == "__main__":
         print(f'Task {i}: ', end='')
 
         # visualize.plot_task(task)
-        process_task("path", task, operation_list, results,
-                     strategy)
+        result_boards = process_task("path", task, results,
+                                     operations.OPERATIONS,
+                                     splitting.SPLITTING_TYPES,
+                                     strategies.STRATEGY)
+        show_results(task, result_boards)
 
         # print(task)
     # save.save_results(results, 'submission.csv')
