@@ -1,6 +1,7 @@
 import config
 # import save
-from operations import move
+# from operations import move
+import operations
 import visualize  # noqa
 import taskfilter
 import board
@@ -8,7 +9,7 @@ import json
 import strategies
 
 from splitting import SPLITTING_TYPES
-from strategy import ProcessingStrategy
+from strategies.strategy import ProcessingStrategy
 
 
 def calculate(input_board, paths):
@@ -63,7 +64,7 @@ def show_results(task, result_boards):
           f'{correct_results}/{total_results} correct boards ')
 
 
-def process_task(file_path, task, operations, results, strategy):
+def process_task(file_path, task, operation_list, results, strategy):
     prepare_task(task)
 
     num_test = len(task['test'])
@@ -73,7 +74,7 @@ def process_task(file_path, task, operations, results, strategy):
     for split_type in range(SPLITTING_TYPES):
         set_split_type(task, split_type)
 
-        paths = strategy.solve(task, operations, remaining_result_boards)
+        paths = strategy.solve(task, operation_list, remaining_result_boards)
 
         for i in range(num_test):
             result_boards[i].extend(calculate(task['test'][i]['input'], paths))
@@ -88,7 +89,7 @@ def process_task(file_path, task, operations, results, strategy):
 
 if __name__ == "__main__":
     results = []
-    operations = [move.Move]  # TODO
+    operation_list = [operations.Move]  # TODO
     i = 0
 
     if config.processing_strategy == ProcessingStrategy.FIRST_ONLY:
@@ -114,8 +115,8 @@ if __name__ == "__main__":
         print(task["name"])
         print(f'Task {i}: ', end='')
 
-        visualize.plot_task(task)
-        process_task("path", task, operations, results,
+        # visualize.plot_task(task)
+        process_task("path", task, operation_list, results,
                      strategy)
 
         # print(task)

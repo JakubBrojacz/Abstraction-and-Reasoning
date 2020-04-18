@@ -1,5 +1,5 @@
 from pathlib import Path
-import strategy
+import strategies.strategy as strategy
 
 data_path = Path('data/')
 # training_path = data_path / 'training_sample'
