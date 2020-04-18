@@ -1,30 +1,40 @@
-# import numpy as np
-# import pandas as pd
-
-import numpy
-from json import JSONEncoder
 import json
 
 import matplotlib.pyplot as plt
 from matplotlib import colors
 
+import splitting
+
 import config
 
 
-def plot_one(ax, task, i, train_or_test, input_or_output):
+def plot_matrix(ax, matrix):
     cmap = colors.ListedColormap(
         ['#000000', '#0074D9', '#FF4136', '#2ECC40', '#FFDC00',
          '#AAAAAA', '#F012BE', '#FF851B', '#7FDBFF', '#870C25',
          '#660066'])
     norm = colors.Normalize(vmin=0, vmax=10)
 
-    input_matrix = task[train_or_test][i][input_or_output]
-    ax.imshow(input_matrix, cmap=cmap, norm=norm)
+    ax.imshow(matrix, cmap=cmap, norm=norm)
     ax.grid(True, which='both', color='lightgrey', linewidth=0.5)
-    ax.set_yticks([x-0.5 for x in range(1+len(input_matrix))])
-    ax.set_xticks([x-0.5 for x in range(1+len(input_matrix[0]))])
+    ax.set_yticks([x-0.5 for x in range(1+len(matrix))])
+    ax.set_xticks([x-0.5 for x in range(1+len(matrix[0]))])
     ax.set_xticklabels([])
     ax.set_yticklabels([])
+    ax.set_title("matrix")
+
+
+def plot_one(ax, task, i, train_or_test, input_or_output):
+    input_matrix = task[train_or_test][i][input_or_output]
+    plot_matrix(ax, input_matrix)
+    ax.set_title(train_or_test + ' '+input_or_output)
+
+
+def plot_one_aa(ax, task, i, train_or_test, input_or_output):
+    input_matrix = task[train_or_test][i][input_or_output]
+    element = splitting.get_elements(input_matrix)[0][0]
+    input_matrix = element.matrix
+    plot_matrix(ax, input_matrix)
     ax.set_title(train_or_test + ' '+input_or_output)
 
 
@@ -37,6 +47,7 @@ def plot_task(task):
     fig, axs = plt.subplots(2, num_train, figsize=(3*num_train, 3*2))
     for i in range(num_train):
         plot_one(axs[0, i], task, i, 'train', 'input')
+        # plot_one_aa(axs[1, i], task, i, 'train', 'input')
         plot_one(axs[1, i], task, i, 'train', 'output')
     plt.tight_layout()
     plt.show()
@@ -67,6 +78,7 @@ def plot_output(output):
     data = {"test": [{"output": output}]}
     task = json.dumps(data)
     plot_array(task)
+
 
 if __name__ == "__main__":
     for i in range(len(config.training_tasks)):
