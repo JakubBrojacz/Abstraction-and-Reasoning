@@ -11,8 +11,8 @@ class SymmetryType(Enum):
 
 class Symmetry(Operation):
     @classmethod
-    def run_operation(cls, board: Board, args):
-        for element in board.elements:
+    def run_operation(cls, board: Board, elements, args):
+        for element in elements:
             elem_copy = [[value for value in row] for row in element.matrix]
             if args["symmetry_type"] == SymmetryType.HORIZONTAL:
                 for i in range(len(elem_copy)):
@@ -32,7 +32,7 @@ class Symmetry(Operation):
         return board
 
     @classmethod
-    def gen_args(cls, board):
+    def gen_args(cls, board, elements):
         for symmetry_type in SymmetryType:
             yield {
                 "symmetry_type": symmetry_type

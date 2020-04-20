@@ -7,18 +7,30 @@ class Board:
             raise Exception("BAD MATRIX")
         self.elements = None
         self.element_group = None
+        self.counter_element_group = None
 
     def copy(self):
         c = Board(self.matrix)
         c.elements = [element.copy() for element in self.elements]
+        c.element_group = [element.copy() for element in self.element_group]
+        c.element_group_counter = [element.copy() for element in self.element_group_counter]
         return c
 
     def set_split_type(self, split_type):
         self.elements = split_type.get_elements(self.matrix)
 
     def set_element_group_type(self, element_group_type):
-        self.element_group = element_group_type.get_element_group(
+        element_group = element_group_type.get_element_group(
             self.matrix, self.elements)
+        self.element_group = [element.copy() for element in element_group]
+        self.element_group_counter = [element.copy()
+                                      for element in self.elements
+                                      if element not in element_group]
+        # self.element_group = [element.copy() for element in self.elements
+        #                       if element in element_group]
+        # self.element_group_counter = [element.copy()
+        #                               for element in self.elements
+        #                               if element not in element_group]
 
     def equals(self, board2):
         if len(self.matrix) != len(board2.matrix):
@@ -51,7 +63,9 @@ class Board:
 
     def redraw(self):
         self.clean_matrix()
-        for element in self.elements:
+        for element in self.element_group_counter:
+            self.draw_element(element)
+        for element in self.element_group:
             self.draw_element(element)
         return self
 

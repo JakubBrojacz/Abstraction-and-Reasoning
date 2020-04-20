@@ -4,19 +4,19 @@ from board import Board
 
 class Move(Operation):
     @classmethod
-    def run_operation(cls, board: Board, args):
-        for element in board.elements:
+    def run_operation(cls, board: Board, elements, args):
+        for element in elements:
             element.pos = (element.pos[0]+args["x"],
                            element.pos[1]+args["y"])
         return board
 
     @classmethod
-    def gen_args(cls, board):
+    def gen_args(cls, board, elements):
         # for i in range(-board.height, board.height):
         #     for j in range(-board.width, board.width):
         for i in [-1, 0, 1]:
             for j in [-1, 0, 1]:
-                if validate_move(board, board.elements, i, j):
+                if validate_move(board, elements, i, j):
                     yield {
                         "x": i,
                         "y": j

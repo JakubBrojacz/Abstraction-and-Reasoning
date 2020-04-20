@@ -7,5 +7,5 @@ class Biggest:
                 max_area = len(element.matrix) * len(element.matrix[0])
         for element in elements:
             if len(element.matrix) * len(element.matrix[0]) == max_area:
-                result_elements.append(element.copy())
+                result_elements.append(element)
         return result_elements
