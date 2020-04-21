@@ -5,9 +5,9 @@ import taskfilter
 import strategies
 import operations
 import splitting
-import visualize  # noqa
 import config
 import board
+import result_visualize
 # import save
 
 
@@ -67,6 +67,7 @@ def show_results(task, result_boards):
                 test_passed = True
         if test_passed:
             passed_tests += 1
+    result_visualize.draw(task, result_boards)
     print(f'{passed_tests}/{len(task["test"])} tests passed with '
           f'{correct_results}/{total_results} correct boards ')
 
@@ -120,12 +121,10 @@ if __name__ == "__main__":
         print(task["name"])
         print(f'Task {i}: ', end='')
 
-        # visualize.plot_task(task)
         result_boards = process_task("path", task, results,
                                      operations.OPERATIONS,
                                      splitting.SPLITTING_TYPES,
                                      strategies.STRATEGY)
         show_results(task, result_boards)
 
-        # print(task)
     # save.save_results(results, 'submission.csv')
