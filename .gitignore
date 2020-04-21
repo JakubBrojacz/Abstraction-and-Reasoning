@@ -144,3 +144,7 @@ cython_debug/
 # static files generated from Django application using `collectstatic`
 media
 static
+
+#Project files
+/Abstraction-and-Reasoning.pyproj
+/Abstraction-and-Reasoning.sln
