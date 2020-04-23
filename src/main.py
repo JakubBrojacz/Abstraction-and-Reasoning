@@ -111,10 +111,10 @@ if __name__ == "__main__":
             tasks.append(json.load(file))
             tasks[-1]["name"] = path
 
-    #tasks = taskfilter.filter_tasks_by_max_board_area(
-    #    tasks, config.max_board_area)
-    #tasks = taskfilter.filter_tasks_by_number_of_colors(
-    #    tasks, config.min_colors, config.max_colors, config.must_have_black)
+    tasks = taskfilter.filter_tasks_by_max_board_area(
+        tasks, config.max_board_area)
+    tasks = taskfilter.filter_tasks_by_number_of_colors(
+        tasks, config.min_colors, config.max_colors, config.must_have_black)
 
     for task in tasks:
         i += 1
