@@ -3,14 +3,30 @@ from operations.operation import Operation
 from board import Board
 from config import background_color
 from config import number_of_colors
+import element_groups
 
 class ConnectionType(Enum):
     FourWayConnected = 1
     EightWayConnected = 2
 
+class ColorSource(Enum):
+    ParticularFromAllColors = 1
+    FromGroup = 2
+
 class FillElements(Operation):
     @classmethod
     def run_operation(cls, board: Board, elements, args):
+        
+        if args["ColorSource"] == ColorSource.ParticularFromAllColors:
+            color = args["Color"]
+        else:
+            reference_group =  args["Group"].get_element_group(board.matrix, board.elements)
+            if len(reference_group) == 0:
+                return None
+            color = reference_group[0].color
+            if color is None:
+                return None
+        
         for element in elements:
             if(len(element.matrix) < 3 and len(element.matrix[0]) < 3):
                 continue
@@ -20,7 +36,7 @@ class FillElements(Operation):
                     if(element.matrix[i - 1][j] != background_color and
                        element.matrix[i][j - 1] != background_color and
                        element.matrix[i][j] == background_color):
-                        try_fill_area(element, j, i, args["Color"], args["ConnectionType"])
+                        try_fill_area(element, j, i, color, args["ConnectionType"])
 
         return board
 
@@ -31,7 +47,14 @@ class FillElements(Operation):
         for space_connection_type in ConnectionType:
             for color in range(0, number_of_colors):
                 yield {
-                    "Color": color,
+                    "ColorSource": ColorSource.ParticularFromAllColors,
+                    "Color": color , 
+                    "ConnectionType": space_connection_type
+                }
+            for element_group_type in element_groups.ELEMENT_GROUPS:
+                yield {
+                    "ColorSource": ColorSource.FromGroup,
+                    "Group": element_group_type , 
                     "ConnectionType": space_connection_type
                 }
 
