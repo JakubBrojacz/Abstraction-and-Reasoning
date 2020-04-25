@@ -1,7 +1,7 @@
 from enum import Enum
 from operations.operation import Operation
 from board import Board
-from config import background_color
+from config import transparent_color
 from config import number_of_colors
 import element_groups
 
@@ -33,9 +33,9 @@ class FillElements(Operation):
 
             for i in range(1, len(element.matrix) - 1):
                 for j in range(1, len(element.matrix[0]) - 1):
-                    if(element.matrix[i - 1][j] != background_color and
-                       element.matrix[i][j - 1] != background_color and
-                       element.matrix[i][j] == background_color):
+                    if(element.matrix[i - 1][j] != transparent_color and
+                       element.matrix[i][j - 1] != transparent_color and
+                       element.matrix[i][j] == transparent_color):
                         try_fill_area(element, j, i, color, args["ConnectionType"])
 
         return board
@@ -97,22 +97,22 @@ def check_neighbours(y1, x1, is_limited, width, height,
 
     if(y1 > 0 and
        not is_cell_checked[y1 - 1][x1]
-       and element.matrix[y1 - 1][x1] == background_color):
+       and element.matrix[y1 - 1][x1] == transparent_color):
         check_neighbours(y1 - 1, x1, is_limited, width, height,
                          is_cell_checked, element, space_connection_type)
     if(y1 < height - 1 and
        not is_cell_checked[y1 + 1][x1]
-       and element.matrix[y1 + 1][x1] == background_color):
+       and element.matrix[y1 + 1][x1] == transparent_color):
         check_neighbours(y1 + 1, x1, is_limited, width, height,
                          is_cell_checked, element, space_connection_type)
     if(x1 > 0 and
        not is_cell_checked[y1][x1 - 1]
-       and element.matrix[y1][x1 - 1] == background_color):
+       and element.matrix[y1][x1 - 1] == transparent_color):
         check_neighbours(y1, x1 - 1, is_limited, width, height,
                          is_cell_checked, element, space_connection_type)
     if(x1 < width - 1 and
        not is_cell_checked[y1][x1 + 1]
-       and element.matrix[y1][x1 + 1] == background_color):
+       and element.matrix[y1][x1 + 1] == transparent_color):
         check_neighbours(y1, x1 + 1, is_limited, width, height,
                          is_cell_checked, element, space_connection_type)
 
@@ -120,24 +120,24 @@ def check_neighbours(y1, x1, is_limited, width, height,
         if(y1 > 0 and
            x1 > 0 and
            not is_cell_checked[y1 - 1][x1 - 1]
-           and element.matrix[y1 - 1][x1 - 1] == background_color):
+           and element.matrix[y1 - 1][x1 - 1] == transparent_color):
             check_neighbours(y1 - 1, x1 - 1, is_limited, width, height,
                              is_cell_checked, element, space_connection_type)
         if(y1 > 0 and
            x1 < width - 1 and
            not is_cell_checked[y1 - 1][x1 + 1]
-           and element.matrix[y1 - 1][x1 + 1] == background_color):
+           and element.matrix[y1 - 1][x1 + 1] == transparent_color):
             check_neighbours(y1 - 1, x1 + 1, is_limited, width, height,
                              is_cell_checked, element, space_connection_type)
         if(y1 < height - 1 and
            x1 > 0 and
            not is_cell_checked[y1 + 1][x1 - 1]
-           and element.matrix[y1 + 1][x1 - 1] == background_color):
+           and element.matrix[y1 + 1][x1 - 1] == transparent_color):
             check_neighbours(y1 + 1, x1 - 1, is_limited, width, height,
                              is_cell_checked, element, space_connection_type)
         if(y1 < height - 1 and
            x1 < width - 1 and
            not is_cell_checked[y1 + 1][x1 + 1]
-           and element.matrix[y1 + 1][x1 + 1] == background_color):
+           and element.matrix[y1 + 1][x1 + 1] == transparent_color):
             check_neighbours(y1 + 1, x1 + 1, is_limited, width, height,
                              is_cell_checked, element, space_connection_type)

@@ -29,8 +29,8 @@ class OneByOneStrategy:
                         return paths
 
                 for op2 in operations:
-                    if op1 == op2:
-                        continue
+                    #if op1 == op2:
+                    #    continue
                     for result2, args2 in op2.try_run(result1):
                         if result2 is None:
                             continue
