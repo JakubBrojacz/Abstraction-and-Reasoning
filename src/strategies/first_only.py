@@ -23,6 +23,8 @@ class FirstOnlyStrategy:
         matches = 0
         for op1 in operations:
             for result1, args1 in op1.try_run(input_board):
+                if result1 is None:
+                    continue
                 if result1.equals(output_board):
                     paths.append([
                         (op1, args1)
@@ -34,6 +36,8 @@ class FirstOnlyStrategy:
                     if op1 == op2:
                         continue
                     for result2, args2 in op2.try_run(result1):
+                        if result2 is None:
+                            continue
                         if result2.equals(output_board):
                             paths.append([
                                 (op1, args1),

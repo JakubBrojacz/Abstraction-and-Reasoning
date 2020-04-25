@@ -15,3 +15,6 @@ max_board_area = 128
 min_colors = 0
 max_colors = 2
 must_have_black = True
+
+background_color = 10
+number_of_colors = 10
