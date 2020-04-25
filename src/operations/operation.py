@@ -9,6 +9,8 @@ class Operation:
         board_copy = cls.run_operation(board_copy,
                                        board_copy.element_group,
                                        args)
+        if board_copy is None:
+            return None
         return board_copy.redraw()
 
     @classmethod
