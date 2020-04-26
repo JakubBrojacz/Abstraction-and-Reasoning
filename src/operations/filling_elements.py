@@ -17,6 +17,8 @@ class FillElements(Operation):
     @classmethod
     def run_operation(cls, board: Board, elements, args):
         
+        any_change = False
+
         if args["ColorSource"] == ColorSource.ParticularFromAllColors:
             color = args["Color"]
         else:
@@ -36,10 +38,11 @@ class FillElements(Operation):
                     if(element.matrix[i - 1][j] != transparent_color and
                        element.matrix[i][j - 1] != transparent_color and
                        element.matrix[i][j] == transparent_color):
-                        try_fill_area(element, j, i, color, args["ConnectionType"])
-
-        return board
-
+                        if try_fill_area(element, j, i, color, args["ConnectionType"]) and not any_change:
+                            any_change = True
+        if any_change:
+            return board
+        return None
 
 
     @classmethod
@@ -73,12 +76,13 @@ def try_fill_area(element,
                      is_cell_checked, element, space_connection_type)
 
     if not is_limited[0]:
-        return
+        return False
 
     for i in range(height):
         for j in range(width):
             if is_cell_checked[i][j] == True:
                 element.matrix[i][j] = color
+    return True
 
 def check_neighbours(y1, x1, is_limited, width, height,
                      is_cell_checked, element, space_connection_type):

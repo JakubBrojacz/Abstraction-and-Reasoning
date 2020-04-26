@@ -1,14 +1,15 @@
 import element
 
 
-SPLITTING_TYPES = 5
-
+SPLITTING_TYPES = 6
 
 def get_elements(matrix,
                  backgroundColor=0,
                  numberOfColors=10,
                  transparentColor=10):
     divisions = []
+    divisions.append(everything_as_one_element(
+        matrix, 0, 10))
     divisions.append(split_only_by_color(
         matrix, backgroundColor, transparentColor, numberOfColors))
     divisions.append(split(matrix, backgroundColor,
@@ -21,19 +22,57 @@ def get_elements(matrix,
                            transparentColor, 8, False))
     return divisions
 
+def everything_as_one_element(matrix, 
+                              backgroundColor,
+                              transparentColor):
+    listOfElements = []
+    width = len(matrix[0])
+    height = len(matrix)
+    leftUpCornerElementFrame = (height, width)
+    rightDownCornerOfElementFrame = (-1, -1)
+    for row in range(height):
+        for col in range(width):
+            if matrix[row][col] != backgroundColor:
+                if row > rightDownCornerOfElementFrame[0]:
+                    rightDownCornerOfElementFrame = (
+                        row, rightDownCornerOfElementFrame[1])
+                if col > rightDownCornerOfElementFrame[1]:
+                    rightDownCornerOfElementFrame = (
+                        rightDownCornerOfElementFrame[0], col)
+                if row < leftUpCornerElementFrame[0]:
+                    leftUpCornerElementFrame = (
+                        row, leftUpCornerElementFrame[1])
+                if col < leftUpCornerElementFrame[1]:
+                    leftUpCornerElementFrame = (
+                        leftUpCornerElementFrame[0], col)
+    
+    elementFrameWidth = rightDownCornerOfElementFrame[1] - \
+        leftUpCornerElementFrame[1] + 1
+    elementFrameHeight = rightDownCornerOfElementFrame[0] - \
+        leftUpCornerElementFrame[0] + 1
+    matrixForElement = [[transparentColor for j in range(
+        elementFrameWidth)] for k in range(elementFrameHeight)]
+    for row in range(height):
+        for col in range(width):
+            if matrix[row][col] != backgroundColor:
+                pos = (row - leftUpCornerElementFrame[0],
+                       col - leftUpCornerElementFrame[1])
+                matrixForElement[pos[0]][pos[1]] = matrix[row][col]
+    el = element.Element(matrixForElement, leftUpCornerElementFrame, None)
+    return [el]
 
 def split_only_by_color(matrix,
                         backgroundColor,
                         transparentColor,
                         numberOfColors):
-
+   
     listOfElements = []
     isColor = [False for i in range(numberOfColors)]
     leftUpCornerElementFrame = []
     rightDownCornerOfElementFrame = []
     width = len(matrix[0])
     height = len(matrix)
-
+    
     for i in range(numberOfColors):
         leftUpCornerElementFrame.append((height, width))
         rightDownCornerOfElementFrame.append((-1, -1))

@@ -1,5 +1,10 @@
 from . import main_splitting
 
+class EverythingAsOneElement:
+    def get_elements(matrix):
+        return main_splitting.everything_as_one_element(
+            matrix, 0, 10
+            )
 
 class ColorSplit:
     def get_elements(matrix):
