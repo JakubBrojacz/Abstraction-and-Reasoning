@@ -9,6 +9,8 @@ class Move(Operation):
             for element in elements:   
                     element.pos = (element.pos[0]+args["y"],
                                 element.pos[1]+args["x"])
+        else:
+            return None
         return board
 
     @classmethod
@@ -17,12 +19,11 @@ class Move(Operation):
         #     for j in range(-board.width, board.width):
         for i in [-1, 0, 1]:
             for j in [-1, 0, 1]:
-                if i!=0 or j!=0:
-                    if validate_move(board, elements, i, j):
-                        yield {
-                            "x": i,
-                            "y": j
-                        }
+                if validate_move(board, elements, i, j):
+                    yield {
+                        "x": i,
+                        "y": j
+                    }
 
 
 def validate_move(board, elements, i, j):
