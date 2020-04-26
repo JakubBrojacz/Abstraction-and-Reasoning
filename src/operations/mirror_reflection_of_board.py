@@ -1,9 +1,9 @@
 import board
+import element_groups
 from operations.operation import Operation
 from board import Board
 from enum import Enum
 from config import background_color
-import element_groups
 
 class ReflectionType(Enum):
     UP = 1
@@ -14,30 +14,29 @@ class ReflectionType(Enum):
 class MirrorReflectionOfBoard(Operation):
     @classmethod
     def run_operation(cls, board: Board, elements, args):
-        if args["referenced_to_group"] == False:
+        if not args["referenced_to_group"]:
             if args["reflection_type"] == ReflectionType.UP:
                 return up_reflection(board, elements)
-            elif args["reflection_type"] == ReflectionType.DOWN:
+            if args["reflection_type"] == ReflectionType.DOWN:
                 return down_reflection(board, elements)
-            elif args["reflection_type"] == ReflectionType.RIGHT:
+            if args["reflection_type"] == ReflectionType.RIGHT:
                 return right_reflection(board, elements)
-            elif args["reflection_type"] == ReflectionType.LEFT:
+            if args["reflection_type"] == ReflectionType.LEFT:
                 return left_reflection(board, elements)
 
 
-        if args["referenced_to_group"] == True:
-            reference_group =  args["group"].get_element_group(board.matrix, board.elements)
+        if args["referenced_to_group"]:
+            reference_group = args["group"].get_element_group(board.matrix, board.elements)
             if len(reference_group) == 0:
                 return None
             if reference_group[0].pos[0] == 0:
                 return up_reflection(board, elements)
-            elif reference_group[0].pos[0] + len(reference_group[0].matrix) == len(board.matrix):
-                    return down_reflection(board, elements)
-            elif reference_group[0].pos[1] + len(reference_group[0].matrix[0]) == len(board.matrix[0]):
-                    return right_reflection(board, elements)
-            elif reference_group[0].pos[1] == 0:
+            if reference_group[0].pos[0] + len(reference_group[0].matrix) == len(board.matrix):
+                return down_reflection(board, elements)
+            if reference_group[0].pos[1] + len(reference_group[0].matrix[0]) == len(board.matrix[0]):
+                return right_reflection(board, elements)
+            if reference_group[0].pos[1] == 0:
                 return left_reflection(board, elements)
-            
 
         return None
 
@@ -51,19 +50,19 @@ class MirrorReflectionOfBoard(Operation):
             }
         for element_group_type in element_groups.ELEMENT_GROUPS:
             yield{
-                    "referenced_to_group" : True,
-                    "group" : element_group_type
+                "referenced_to_group" : True,
+                "group" : element_group_type
                 }
 
 
-def up_reflection(old_board, elements):                
+def up_reflection(old_board, elements):
     matrix = [
         [background_color for col in range(old_board.width)]
         for row in range(2 * old_board.height)]
     new_board = board.Board(matrix)
     elements1 = [element.copy() for element in elements]
     for element in elements1:
-        element.pos = (element.pos[0] + old_board.height , element.pos[1])
+        element.pos = (element.pos[0] + old_board.height, element.pos[1])
     elements2 = [element.copy() for element in elements]
     for element in elements2:
         element.pos = (old_board.height - element.pos[0] - len(element.matrix), element.pos[1])
@@ -71,7 +70,7 @@ def up_reflection(old_board, elements):
     add_elements_to_new_board(old_board, new_board, elements1, elements2)
     return new_board
 
-def down_reflection(old_board, elements):                
+def down_reflection(old_board, elements):
     matrix = [
         [background_color for col in range(old_board.width)]
         for row in range(2 * old_board.height)]
@@ -79,12 +78,13 @@ def down_reflection(old_board, elements):
     elements1 = [element.copy() for element in elements]
     elements2 = [element.copy() for element in elements]
     for element in elements2:
-        element.pos = (2 * old_board.height - element.pos[0] - len(element.matrix), element.pos[1])
+        element.pos = (2 * old_board.height - element.pos[0] - len(element.matrix),
+                       element.pos[1])
         element = horizontal_symmetry(element)
     add_elements_to_new_board(old_board, new_board, elements1, elements2)
     return new_board
 
-def right_reflection(old_board, elements):                
+def right_reflection(old_board, elements):
     matrix = [
         [background_color for col in range(2*old_board.width)]
         for row in range(old_board.height)]
@@ -92,12 +92,13 @@ def right_reflection(old_board, elements):
     elements1 = [element.copy() for element in elements]
     elements2 = [element.copy() for element in elements]
     for element in elements2:
-        element.pos = (element.pos[0], 2 * old_board.width - element.pos[1] - len(element.matrix[0]))
+        element.pos = (element.pos[0],
+                       2 * old_board.width - element.pos[1] - len(element.matrix[0]))
         element = vertical_symmetry(element)
     add_elements_to_new_board(old_board, new_board, elements1, elements2)
     return new_board
 
-def left_reflection(old_board, elements):                
+def left_reflection(old_board, elements):
     matrix = [
         [background_color for col in range(2 * old_board.width)]
         for row in range(old_board.height)]
@@ -107,7 +108,8 @@ def left_reflection(old_board, elements):
         element.pos = (element.pos[0], element.pos[1] + old_board.width)
     elements2 = [element.copy() for element in elements]
     for element in elements2:
-        element.pos = (element.pos[0], old_board.width - element.pos[1] - len(element.matrix[0]))
+        element.pos = (element.pos[0],
+                       old_board.width - element.pos[1] - len(element.matrix[0]))
         element = vertical_symmetry(element)
     add_elements_to_new_board(old_board, new_board, elements1, elements2)
     return new_board
@@ -120,7 +122,6 @@ def add_elements_to_new_board(old_board, new_board, elements1, elements2):
         new_board.draw_element(element)
     new_board.set_split_type(old_board.split_type)
     new_board.set_element_group_type(old_board.element_group_type)
-
 
 def horizontal_symmetry(element):
     elem_copy = [[value for value in row] for row in element.matrix]
