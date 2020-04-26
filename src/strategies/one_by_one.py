@@ -66,6 +66,8 @@ class OneByOneStrategy:
         processed_board = input_board.copy()
         for operation, args in path:
             processed_board = operation.run(processed_board, args)
+            if processed_board is None:
+                return False
         if processed_board.equals(output_board):
             return True
         return False
