@@ -25,7 +25,6 @@ class BoardExtension(Operation):
             ysize = board.height * yarg
 
         board.matrix = [[x for x in range(xsize)] for y in range(ysize)]
-        board.redraw()
 
         return board
 
