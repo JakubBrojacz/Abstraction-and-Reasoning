@@ -18,3 +18,5 @@ must_have_black = True
 
 background_color = 10
 number_of_colors = 10
+
+max_board_dimension_size = 30
