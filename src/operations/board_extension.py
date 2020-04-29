@@ -1,10 +1,10 @@
+from enum import Enum
 from operations.operation import Operation
 from board import Board
-from enum import Enum
 import config
 
 class ExtensionType(Enum):
-    UNITS = 1,
+    UNITS = 1
     MULTIPLY = 2
 
 
@@ -13,7 +13,7 @@ class BoardExtension(Operation):
     def run_operation(cls, board: Board, elements, args):
         (xtype, xarg) = args["x"]
         (ytype, yarg) = args["y"]
-        
+
         if xtype == ExtensionType.UNITS:
             xsize = board.width + xarg
         elif xtype == ExtensionType.MULTIPLY:
@@ -32,7 +32,7 @@ class BoardExtension(Operation):
     def gen_args(cls, board, elements):
         xsize = board.width
         ysize = board.height
-        for x_extension_type in ExtensionType: 
+        for x_extension_type in ExtensionType:
             for y_extension_type in ExtensionType:
                 if x_extension_type == ExtensionType.UNITS:
                     xdelta = 1
