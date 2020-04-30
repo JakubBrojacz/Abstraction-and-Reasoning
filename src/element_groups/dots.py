@@ -4,7 +4,7 @@ class Dots:
         matrix = board.matrix
         result_elements = []
         for element in elements:
-            if len(element.matrix) == 1 and\
-                    len(element.matrix[0]) == 1:
+            if element.height == 1 and\
+                    element.width == 1:
                 result_elements.append(element)
         return result_elements

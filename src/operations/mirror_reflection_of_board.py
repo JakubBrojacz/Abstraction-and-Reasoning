@@ -65,7 +65,7 @@ def up_reflection(old_board, elements):
         element.pos = (element.pos[0] + old_board.height, element.pos[1])
     elements2 = [element.copy() for element in elements]
     for element in elements2:
-        element.pos = (old_board.height - element.pos[0] - len(element.matrix), element.pos[1])
+        element.pos = (old_board.height - element.pos[0] - element.height, element.pos[1])
         element = horizontal_symmetry(element)
     add_elements_to_new_board(old_board, new_board, elements1, elements2)
     return new_board
@@ -78,7 +78,7 @@ def down_reflection(old_board, elements):
     elements1 = [element.copy() for element in elements]
     elements2 = [element.copy() for element in elements]
     for element in elements2:
-        element.pos = (2 * old_board.height - element.pos[0] - len(element.matrix),
+        element.pos = (2 * old_board.height - element.pos[0] - element.height,
                        element.pos[1])
         element = horizontal_symmetry(element)
     add_elements_to_new_board(old_board, new_board, elements1, elements2)
@@ -93,7 +93,7 @@ def right_reflection(old_board, elements):
     elements2 = [element.copy() for element in elements]
     for element in elements2:
         element.pos = (element.pos[0],
-                       2 * old_board.width - element.pos[1] - len(element.matrix[0]))
+                       2 * old_board.width - element.pos[1] - element.width)
         element = vertical_symmetry(element)
     add_elements_to_new_board(old_board, new_board, elements1, elements2)
     return new_board
@@ -109,7 +109,7 @@ def left_reflection(old_board, elements):
     elements2 = [element.copy() for element in elements]
     for element in elements2:
         element.pos = (element.pos[0],
-                       old_board.width - element.pos[1] - len(element.matrix[0]))
+                       old_board.width - element.pos[1] - element.width)
         element = vertical_symmetry(element)
     add_elements_to_new_board(old_board, new_board, elements1, elements2)
     return new_board

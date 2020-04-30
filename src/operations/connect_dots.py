@@ -19,7 +19,7 @@ class ConnectDots(Operation):
         for element in elements:
             if element.matrix[0][0] > max_color:
                 max_color = element.matrix[0][0]
-            if len(element.matrix) != 1 or len(element.matrix[0]) != 1:
+            if element.height != 1 or element.width != 1:
                 return None
         if max_color == -1:
             return None

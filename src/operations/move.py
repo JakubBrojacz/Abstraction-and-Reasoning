@@ -30,7 +30,7 @@ def validate_move(board, elements, i, j):
     for element in elements:
         if element.pos[1]+i < 0 or\
                 element.pos[0] + j < 0 or\
-                element.pos[0]+j+len(element.matrix) > board.height or\
-                element.pos[1]+i+len(element.matrix[0]) > board.width:
+                element.pos[0]+j+element.height > board.height or\
+                element.pos[1]+i+element.width > board.width:
             return False
     return True

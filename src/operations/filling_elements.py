@@ -30,11 +30,11 @@ class FillElements(Operation):
                 return None
         
         for element in elements:
-            if(len(element.matrix) < 3 and len(element.matrix[0]) < 3):
+            if(element.height < 3 and element.width < 3):
                 continue
 
-            for i in range(1, len(element.matrix) - 1):
-                for j in range(1, len(element.matrix[0]) - 1):
+            for i in range(1, element.height - 1):
+                for j in range(1, element.width - 1):
                     if(element.matrix[i - 1][j] != transparent_color and
                        element.matrix[i][j - 1] != transparent_color and
                        element.matrix[i][j] == transparent_color):
@@ -67,8 +67,8 @@ def try_fill_area(element,
                   color,
                   space_connection_type=ConnectionType.FourWayConnected):
 
-    width = len(element.matrix[0])
-    height = len(element.matrix)
+    width = element.width
+    height = element.height
     is_cell_checked = [[False] * width for i in range(height)]
     is_limited = [True]
 

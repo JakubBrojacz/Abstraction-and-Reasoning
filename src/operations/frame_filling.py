@@ -11,8 +11,8 @@ class FrameFilling(Operation):
 
         for element in elements:
             (begx, begy) = element.pos
-            sizex = len(element.matrix[0])
-            sizey = len(element.matrix)
+            sizex = element.width
+            sizey = element.height
             if begx == 0 or begy == 0 or begx + sizex == board.width - 1 or begy + sizey == board.height - 1:
                 return None
 
