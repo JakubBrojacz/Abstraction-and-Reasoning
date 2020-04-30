@@ -26,8 +26,7 @@ class Board:
 
     def set_element_group_type(self, element_group_type):
         self.element_group_type = element_group_type
-        element_group = element_group_type.get_element_group(
-            self.matrix, self.elements)
+        element_group = element_group_type.get_element_group(self)
         self.element_group = [element.copy() for element in element_group]
         self.element_group_counter = [element.copy()
                                       for element in self.elements

@@ -26,7 +26,7 @@ class MirrorReflectionOfBoard(Operation):
 
 
         if args["referenced_to_group"]:
-            reference_group = args["group"].get_element_group(board.matrix, board.elements)
+            reference_group = args["group"].get_element_group(board)
             if len(reference_group) == 0:
                 return None
             if reference_group[0].pos[0] == 0:

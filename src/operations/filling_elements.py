@@ -22,7 +22,7 @@ class FillElements(Operation):
         if args["ColorSource"] == ColorSource.ParticularFromAllColors:
             color = args["Color"]
         else:
-            reference_group =  args["Group"].get_element_group(board.matrix, board.elements)
+            reference_group = args["Group"].get_element_group(board)
             if len(reference_group) == 0:
                 return None
             color = reference_group[0].color

@@ -1,5 +1,7 @@
 class Biggest:
-    def get_element_group(matrix, elements):
+    def get_element_group(board):
+        elements = board.elements
+        matrix = board.matrix
         result_elements = []
         max_area = 0
         for element in elements:
