@@ -1,4 +1,4 @@
-from config import number_of_colors, background_color
+from config import number_of_colors, background_color, transparent_color
 
 
 class ContainsUniqueColor:
@@ -10,7 +10,8 @@ class ContainsUniqueColor:
             contains_color = [0] * (number_of_colors + 1)
             for row in element.matrix:
                 for field in row:
-                    if field != background_color:
+                    if field != background_color and\
+                            field != transparent_color:
                         contains_color[field] = 1
             for color in range(len(contains_color_count)):
                 contains_color_count[color] += contains_color[color]
