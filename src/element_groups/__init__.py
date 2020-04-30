@@ -9,6 +9,6 @@ ELEMENT_GROUPS = [
     AtEdge,
     Biggest,
     AtEdge,
-    ContainsUniqueColor
+    ContainsUniqueColor,
     Dots
 ]

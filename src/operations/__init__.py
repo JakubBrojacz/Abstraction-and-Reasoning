@@ -16,6 +16,6 @@ OPERATIONS = [
     Move,
     Symmetry,
     FillElements,
-    FrameFilling
+    FrameFilling,
     BoardExtension
 ]
