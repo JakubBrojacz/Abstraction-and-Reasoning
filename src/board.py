@@ -7,7 +7,7 @@ class Board:
             raise Exception("BAD MATRIX")
         self.elements = None
         self.element_group = None
-        self.counter_element_group = None
+        self.element_group_counter = None
         self.split_type = None
         self.element_group_type = None
 
