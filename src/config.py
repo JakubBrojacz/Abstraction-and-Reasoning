@@ -16,5 +16,6 @@ min_colors = 0
 max_colors = 2
 must_have_black = True
 
-background_color = 10
+background_color = 0
+transparent_color = 10
 number_of_colors = 10
