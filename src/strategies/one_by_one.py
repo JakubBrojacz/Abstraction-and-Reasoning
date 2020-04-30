@@ -29,8 +29,8 @@ class OneByOneStrategy:
                         return paths
 
                 for op2 in operations:
-                    if op1 == op2:
-                        continue
+                    #if op1 == op2:
+                    #    continue
                     for result2, args2 in op2.try_run(result1):
                         if result2 is None:
                             continue
@@ -63,7 +63,7 @@ class OneByOneStrategy:
         output: boolean value stating whether output was achieved from input
             via specified path
         '''
-        processed_board = input_board.copy()
+        processed_board = input_board.copy()       
         for operation, args in path:
             processed_board = operation.run(processed_board, args)
             if processed_board is None:
