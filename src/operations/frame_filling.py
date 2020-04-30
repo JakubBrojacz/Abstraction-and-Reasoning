@@ -9,7 +9,7 @@ class FrameFilling(Operation):
         if board.height < 2 or board.width < 2:
             return None
 
-        for element in elements:
+        for element in Board.elements:
             (begx, begy) = element.pos
             sizex = element.width
             sizey = element.height
