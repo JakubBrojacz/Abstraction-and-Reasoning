@@ -24,6 +24,9 @@ class BoardExtension(Operation):
         elif ytype == ExtensionType.MULTIPLY:
             ysize = board.height * yarg
 
+        if xsize > config.max_board_dimension_size or ysize > config.max_board_dimension_size:
+            return None
+  
         board.matrix = [[0 for x in range(xsize)] for y in range(ysize)]
         for element in board.elements:
             board.draw_element(element)
