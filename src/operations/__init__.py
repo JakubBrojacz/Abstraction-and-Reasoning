@@ -7,6 +7,7 @@ from .filling_elements import FillElements
 from .frame_filling import FrameFilling
 from .board_extension import BoardExtension
 from .mirror_reflection_of_board import MirrorReflectionOfBoard
+from .leave_distinct_element import LeaveDistinctElement
 
 OPERATIONS = [
     Extract,
@@ -17,5 +18,6 @@ OPERATIONS = [
     Symmetry,
     FillElements,
     FrameFilling,
-    BoardExtension
+    BoardExtension,
+    LeaveDistinctElement
 ]
