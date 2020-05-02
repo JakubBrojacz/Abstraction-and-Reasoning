@@ -1,3 +1,6 @@
+from config import transparent_color
+
+
 class Board:
     def __init__(self, matrix):
         self.matrix = [
@@ -63,7 +66,7 @@ class Board:
         # print(element.pos)
         for i in range(element.height):
             for j in range(len(element.matrix[i])):
-                if element.matrix[i][j] != 10:
+                if element.matrix[i][j] != transparent_color:
                     self.matrix[i+y_offset][j+x_offset] = element.matrix[i][j]
 
     def redraw(self):

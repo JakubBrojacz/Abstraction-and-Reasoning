@@ -1,6 +1,6 @@
 from operations.operation import Operation
 from board import Board
-from config import background_color
+from config import transparent_color
 from element import Element
 from enum import Enum
 
@@ -59,7 +59,7 @@ class ConnectDots(Operation):
                 continue
             if args["connection_type"] == ConnectionType.DIAGONAL:
                 new_matrix = [
-                    [background_color] * (max_pos_1 - min_pos_1 + 1)
+                    [transparent_color] * (max_pos_1 - min_pos_1 + 1)
                     for k in range(max_pos_0 - min_pos_0 + 1)]
                 if elements_in_color[0].pos[0] == min_pos_0 and\
                         elements_in_color[0].pos[1] == min_pos_1:
