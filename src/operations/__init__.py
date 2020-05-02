@@ -19,8 +19,7 @@ OPERATIONS = [
     Symmetry,
     FillElements,
     FrameFilling,
-    BoardExtension,
-    LeaveDistinctElement
+    LeaveDistinctElement,
     ShapeReplication,
     InterSectTwoPartsOfBoard
 ]
