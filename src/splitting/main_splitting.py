@@ -59,6 +59,8 @@ def everything_as_one_element(matrix,
                        col - leftUpCornerElementFrame[1])
                 matrixForElement[pos[0]][pos[1]] = matrix[row][col]
     el = element.Element(matrixForElement, leftUpCornerElementFrame, None)
+    if el.width == 0:
+        return []
     return [el]
 
 def split_only_by_color(matrix,
