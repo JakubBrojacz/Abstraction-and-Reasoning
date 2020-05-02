@@ -8,7 +8,7 @@ from .frame_filling import FrameFilling
 from .mirror_reflection_of_board import MirrorReflectionOfBoard
 from .leave_distinct_element import LeaveDistinctElement
 from .shape_replication import ShapeReplication
-from .intersect_two_parts_of_board import InterSectTwoPartsOfBoard
+# from .intersect_two_parts_of_board import InterSectTwoPartsOfBoard
 
 OPERATIONS = [
     Extract,
@@ -20,6 +20,5 @@ OPERATIONS = [
     FillElements,
     FrameFilling,
     LeaveDistinctElement,
-    ShapeReplication,
-    InterSectTwoPartsOfBoard
+    ShapeReplication
 ]
