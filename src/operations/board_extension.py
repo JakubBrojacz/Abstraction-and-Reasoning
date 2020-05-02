@@ -26,8 +26,10 @@ class BoardExtension(Operation):
 
         if xsize > config.max_board_dimension_size or ysize > config.max_board_dimension_size:
             return None
-
-        board.matrix = [[x for x in range(xsize)] for y in range(ysize)]
+  
+        board.matrix = [[0 for x in range(xsize)] for y in range(ysize)]
+        for element in board.elements:
+            board.draw_element(element)
 
         return board
 
@@ -54,11 +56,15 @@ class BoardExtension(Operation):
                     yarg = 1
                     ynext = ysize + ydelta
                     while ynext <= config.max_board_dimension_size:
-                        yield {
-                            "x": (x_extension_type, xarg),
-                            "y": (y_extension_type, yarg)
-                        }
+                        yield cls.create_arg(x_extension_type, xarg, y_extension_type, yarg)
                         ynext += ydelta
                         yarg += 1
                     xnext += xdelta
                     xarg += 1
+
+    @classmethod
+    def create_arg(self, xtype, xarg, ytype, yarg):
+        return {
+            "x": (xtype, xarg),
+            "y": (ytype, yarg)
+        }
