@@ -4,7 +4,6 @@ from config import number_of_colors, background_color
 class ContainsUniqueColor:
     def get_element_group(board):
         elements = board.elements
-        matrix = board.matrix
         contains_color_count = [0] * (number_of_colors + 1)
         for element in elements:
             contains_color = [0] * (number_of_colors + 1)
