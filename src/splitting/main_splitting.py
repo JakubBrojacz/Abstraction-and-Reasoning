@@ -3,6 +3,7 @@ import element
 
 SPLITTING_TYPES = 6
 
+
 def get_elements(matrix,
                  backgroundColor=0,
                  numberOfColors=10,
@@ -22,10 +23,10 @@ def get_elements(matrix,
                            transparentColor, 8, False))
     return divisions
 
-def everything_as_one_element(matrix, 
+
+def everything_as_one_element(matrix,
                               backgroundColor,
                               transparentColor):
-    listOfElements = []
     width = len(matrix[0])
     height = len(matrix)
     leftUpCornerElementFrame = (height, width)
@@ -45,7 +46,7 @@ def everything_as_one_element(matrix,
                 if col < leftUpCornerElementFrame[1]:
                     leftUpCornerElementFrame = (
                         leftUpCornerElementFrame[0], col)
-    
+
     elementFrameWidth = rightDownCornerOfElementFrame[1] - \
         leftUpCornerElementFrame[1] + 1
     elementFrameHeight = rightDownCornerOfElementFrame[0] - \
@@ -63,18 +64,19 @@ def everything_as_one_element(matrix,
         return []
     return [el]
 
+
 def split_only_by_color(matrix,
                         backgroundColor,
                         transparentColor,
                         numberOfColors):
-   
+
     listOfElements = []
     isColor = [False for i in range(numberOfColors)]
     leftUpCornerElementFrame = []
     rightDownCornerOfElementFrame = []
     width = len(matrix[0])
     height = len(matrix)
-    
+
     for i in range(numberOfColors):
         leftUpCornerElementFrame.append((height, width))
         rightDownCornerOfElementFrame.append((-1, -1))
