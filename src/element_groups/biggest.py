@@ -1,11 +1,12 @@
 class Biggest:
-    def get_element_group(matrix, elements):
+    def get_element_group(board):
+        elements = board.elements
         result_elements = []
         max_area = 0
         for element in elements:
-            if len(element.matrix) * len(element.matrix[0]) > max_area:
-                max_area = len(element.matrix) * len(element.matrix[0])
+            if element.height * element.width > max_area:
+                max_area = element.height * element.width
         for element in elements:
-            if len(element.matrix) * len(element.matrix[0]) == max_area:
+            if element.height * element.width == max_area:
                 result_elements.append(element)
         return result_elements

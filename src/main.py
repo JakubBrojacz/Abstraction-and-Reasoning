@@ -1,5 +1,7 @@
+import argparse
 import json
 
+import result_visualize
 import element_groups
 import taskfilter
 import strategies
@@ -7,7 +9,6 @@ import operations
 import splitting
 import config
 import board
-import result_visualize
 # import save
 
 
@@ -54,7 +55,7 @@ def set_element_group_type(task, element_group_type):
         test_task['input'].set_element_group_type(element_group_type)
 
 
-def show_results(task, result_boards):
+def show_results(task, result_boards, visualize):
     correct_results = 0
     total_results = 0
     passed_tests = 0
@@ -67,7 +68,8 @@ def show_results(task, result_boards):
                 test_passed = True
         if test_passed:
             passed_tests += 1
-    result_visualize.draw(task, result_boards)
+    if visualize:
+        result_visualize.draw(task, result_boards)
     print(f'{passed_tests}/{len(task["test"])} tests passed with '
           f'{correct_results}/{total_results} correct boards ')
 
@@ -101,7 +103,29 @@ def process_task(file_path, task, results,
     return result_boards
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(description='Abstraction and Reasoning')
+    parser.add_argument('--filter',
+                        '-f',
+                        type=bool,
+                        required=False,
+                        default=False,
+                        action='store',
+                        dest='filter',
+                        help='Filter input tasks?')
+    parser.add_argument('--visualize',
+                        '-v',
+                        type=bool,
+                        required=False,
+                        default=False,
+                        action='store',
+                        dest='visualize',
+                        help='Visualize tasks?')
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
+    args = parse_args()
     results = []
     i = 0
 
@@ -111,10 +135,12 @@ if __name__ == "__main__":
             tasks.append(json.load(file))
             tasks[-1]["name"] = path
 
-    tasks = taskfilter.filter_tasks_by_max_board_area(
-        tasks, config.max_board_area)
-    tasks = taskfilter.filter_tasks_by_number_of_colors(
-        tasks, config.min_colors, config.max_colors, config.must_have_black)
+    if args.filter:
+        tasks = taskfilter.filter_tasks_by_max_board_area(
+            tasks, config.max_board_area)
+        tasks = taskfilter.filter_tasks_by_number_of_colors(
+            tasks, config.min_colors, config.max_colors,
+            config.must_have_black)
 
     for task in tasks:
         i += 1
@@ -125,6 +151,6 @@ if __name__ == "__main__":
                                      operations.OPERATIONS,
                                      splitting.SPLITTING_TYPES,
                                      strategies.STRATEGY)
-        show_results(task, result_boards)
+        show_results(task, result_boards, args.visualize)
 
     # save.save_results(results, 'submission.csv')

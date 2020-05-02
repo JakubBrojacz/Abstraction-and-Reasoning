@@ -7,3 +7,13 @@ class Element:
     def copy(self):
         c = Element(self.matrix, self.pos, self.color)
         return c
+
+    @property
+    def height(self):
+        return len(self.matrix)
+
+    @property
+    def width(self):
+        if len(self.matrix) == 0:
+            return 0
+        return len(self.matrix[0])

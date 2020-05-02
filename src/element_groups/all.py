@@ -1,3 +1,3 @@
 class All:
-    def get_element_group(matrix, elements):
-        return elements
+    def get_element_group(board):
+        return board.elements

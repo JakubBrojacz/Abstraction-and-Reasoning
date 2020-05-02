@@ -5,9 +5,12 @@ from board import Board
 class Move(Operation):
     @classmethod
     def run_operation(cls, board: Board, elements, args):
-        for element in elements:
-            element.pos = (element.pos[0]+args["x"],
-                           element.pos[1]+args["y"])
+        if validate_move(board, elements, args["x"], args["y"]):
+            for element in elements:   
+                    element.pos = (element.pos[0]+args["y"],
+                                element.pos[1]+args["x"])
+        else:
+            return None
         return board
 
     @classmethod
@@ -25,9 +28,9 @@ class Move(Operation):
 
 def validate_move(board, elements, i, j):
     for element in elements:
-        if element.pos[0]+i < 0 or\
-                element.pos[1] + j < 0 or\
-                element.pos[0]+i+len(element.matrix) > board.height or\
-                element.pos[1]+j+len(element.matrix[0]) > board.width:
+        if element.pos[1]+i < 0 or\
+                element.pos[0] + j < 0 or\
+                element.pos[0]+j+element.height > board.height or\
+                element.pos[1]+i+element.width > board.width:
             return False
     return True
