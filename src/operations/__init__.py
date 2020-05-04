@@ -10,6 +10,7 @@ from .mirror_reflection_of_board import MirrorReflectionOfBoard
 from .intersect_two_parts_of_board import InterSectTwoPartsOfBoard
 
 OPERATIONS = [
+    InterSectTwoPartsOfBoard,
     Extract,
     ConnectDots,
     Delete,
@@ -18,6 +19,5 @@ OPERATIONS = [
     Symmetry,
     FillElements,
     FrameFilling,
-    BoardExtension,
-    InterSectTwoPartsOfBoard
+    BoardExtension
 ]
