@@ -8,6 +8,7 @@ from .frame_filling import FrameFilling
 from .mirror_reflection_of_board import MirrorReflectionOfBoard
 from .leave_distinct_element import LeaveDistinctElement
 from .shape_replication import ShapeReplication
+from .rotate_board import RotateBoard
 # from .intersect_two_parts_of_board import InterSectTwoPartsOfBoard
 
 OPERATIONS = [
@@ -15,6 +16,7 @@ OPERATIONS = [
     ConnectDots,
     Delete,
     MirrorReflectionOfBoard,
+    RotateBoard,
     Move,
     Symmetry,
     FillElements,
