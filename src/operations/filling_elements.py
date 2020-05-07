@@ -12,6 +12,7 @@ class ConnectionType(Enum):
 class ColorSource(Enum):
     ParticularFromAllColors = 1
     FromGroup = 2
+    FromElement = 3
 
 class FillElements(Operation):
     @classmethod
@@ -21,7 +22,7 @@ class FillElements(Operation):
 
         if args["ColorSource"] == ColorSource.ParticularFromAllColors:
             color = args["Color"]
-        else:
+        elif args["ColorSource"] == ColorSource.FromGroup:
             reference_group = args["Group"].get_element_group(board)
             if len(reference_group) == 0:
                 return None
@@ -30,6 +31,12 @@ class FillElements(Operation):
                 return None
         
         for element in elements:
+
+            if args["ColorSource"] == ColorSource.FromElement:
+                if element.color == None:
+                    return None
+                color = element.color
+
             if(element.height < 3 and element.width < 3):
                 continue
 
@@ -58,6 +65,10 @@ class FillElements(Operation):
                 yield {
                     "ColorSource": ColorSource.FromGroup,
                     "Group": element_group_type , 
+                    "ConnectionType": space_connection_type
+                }
+            yield{
+                    "ColorSource": ColorSource.FromElement,
                     "ConnectionType": space_connection_type
                 }
 
