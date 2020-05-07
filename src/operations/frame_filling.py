@@ -3,6 +3,7 @@ from board import Board
 from element import Element
 from config import number_of_colors
 
+
 class FrameFilling(Operation):
     @classmethod
     def run_operation(cls, board: Board, elements, args):
@@ -13,13 +14,19 @@ class FrameFilling(Operation):
             (begx, begy) = element.pos
             sizex = element.width
             sizey = element.height
-            if begx == 0 or begy == 0 or begx + sizex == board.width - 1 or begy + sizey == board.height - 1:
+            if begx == 0 or begy == 0 or\
+                    begx + sizex == board.width or\
+                    begy + sizey == board.height:
                 return None
 
-        el1 = Element([[args for x in range(1)] for y in range((board.height - 1))], (0, 0), args)
-        el2 = Element([[args for x in range(board.width - 1)] for y in range(1)], (board.height - 1, 0), args)
-        el3 = Element([[args for x in range(1)] for y in range(board.height - 1)], (1, board.width - 1), args)
-        el4 = Element([[args for x in range(board.width - 1)] for y in range(1)], (0, 1), args)
+        el1 = Element([[args for x in range(1)]
+                       for y in range((board.height - 1))], (0, 0), args)
+        el2 = Element([[args for x in range(board.width - 1)]
+                       for y in range(1)], (board.height - 1, 0), args)
+        el3 = Element([[args for x in range(1)] for y in range(
+            board.height - 1)], (1, board.width - 1), args)
+        el4 = Element([[args for x in range(board.width - 1)]
+                       for y in range(1)], (0, 1), args)
 
         board.elements.append(el1)
         board.elements.append(el2)
