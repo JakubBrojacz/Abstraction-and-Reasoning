@@ -11,13 +11,13 @@ class InterSectTwoPartsOfBoard(Operation):
 
         if is_vertically_divided(board):
             matrix = [
-                [0 for col in range(half_board_width)]
+                [1 for col in range(half_board_width)]
                 for row in range(board.height)]
 
             for i in range(board.height):
                 for j in range(half_board_width):
-                    if board.matrix[i][j] == board.matrix[i][half_board_width + j + 1]:
-                        matrix[i][j] = 1
+                    if board.matrix[i][j] == board.matrix[i][half_board_width + j + 1] and board.matrix[i][j] == background_color:
+                        matrix[i][j] = 0
 
             board.matrix = [
                 [background_color for col in range(half_board_width)]
@@ -35,13 +35,13 @@ class InterSectTwoPartsOfBoard(Operation):
 
         elif is_horizontally_divided(board):
             matrix = [
-                [0 for col in range(board.width)]
+                [1 for col in range(board.width)]
                 for row in range(half_board_height)]
 
             for i in range(half_board_height):
                 for j in range(board.width):
-                    if board.matrix[i][j] == board.matrix[half_board_height + i + 1][j]:
-                        matrix[i][j] = 1
+                    if board.matrix[i][j] == board.matrix[half_board_height + i + 1][j] and board.matrix[i][j] == background_color:
+                        matrix[i][j] = 0
 
             board.matrix = [
                 [background_color for col in range(board.width)]
