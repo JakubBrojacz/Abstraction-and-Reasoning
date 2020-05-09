@@ -2,6 +2,11 @@ from operations.operation import Operation
 from board import Board
 from element import Element
 from config import number_of_colors, background_color
+from enum import Enum
+
+class OperationType(Enum):
+    OR = 1
+    NOR = 2
 
 class InterSectTwoPartsOfBoard(Operation):
     @classmethod
@@ -17,10 +22,11 @@ class InterSectTwoPartsOfBoard(Operation):
                 [1 for col in range(half_board_width)]
                 for row in range(board.height)]
 
-            for i in range(board.height):
-                for j in range(half_board_width):
-                    if board.matrix[i][j] == board.matrix[i][half_board_width + j + 1] and board.matrix[i][j] == background_color:
-                        matrix[i][j] = 0
+            if args["operation_type"] == OperationType.OR:
+                matrix = [[value for value in row] for row in or_operation_vertically(board, matrix, half_board_width)]
+            if args["operation_type"] == OperationType.NOR:
+                matrix = [[value for value in row] for row in or_operation_vertically(board, matrix, half_board_width)]
+                matrix = [[(0, 1)[value == 0] for value in row] for row in matrix]
 
             board.matrix = [
                 [background_color for col in range(half_board_width)]
@@ -32,7 +38,7 @@ class InterSectTwoPartsOfBoard(Operation):
             for i in range(board.height):
                 for j in range(half_board_width):
                     if matrix[i][j] == 1:
-                        el = Element([[args for x in range(1)] for y in range(1)], (i, j), args)
+                        el = Element([[args["color"] for x in range(1)] for y in range(1)], (i, j), args["color"])
                         board.elements.append(el)
                         board.element_group_counter.append(el)
 
@@ -41,10 +47,11 @@ class InterSectTwoPartsOfBoard(Operation):
                 [1 for col in range(board.width)]
                 for row in range(half_board_height)]
 
-            for i in range(half_board_height):
-                for j in range(board.width):
-                    if board.matrix[i][j] == board.matrix[half_board_height + i + 1][j] and board.matrix[i][j] == background_color:
-                        matrix[i][j] = 0
+            if args["operation_type"] == OperationType.OR:
+                matrix = [[value for value in row] for row in or_operation_vertically(board, matrix, half_board_width)]
+            if args["operation_type"] == OperationType.NOR:
+                matrix = [[value for value in row] for row in or_operation_vertically(board, matrix, half_board_width)]
+                matrix = [[(0, 1)[value == 0] for value in row] for row in matrix]
 
             board.matrix = [
                 [background_color for col in range(board.width)]
@@ -56,7 +63,7 @@ class InterSectTwoPartsOfBoard(Operation):
             for i in range(half_board_height):
                 for j in range(board.width):
                     if matrix[i][j] == 1:
-                        el = Element([[args for x in range(1)] for y in range(1)], (i, j), args)
+                        el = Element([[args["color"] for x in range(1)] for y in range(1)], (i, j), args["color"])
                         board.elements.append(el)
                         board.element_group_counter.append(el)
         else:
@@ -67,7 +74,11 @@ class InterSectTwoPartsOfBoard(Operation):
     @classmethod
     def gen_args(cls, board, elements):
         for i in range(number_of_colors):
-            yield i
+            for operation_type in OperationType:
+                yield {
+                    "operation_type": operation_type,
+                    "color": i
+                }
 
 
 def is_horizontally_divided(board):
@@ -98,3 +109,17 @@ def is_vertically_divided(board):
             return False
 
     return True
+
+def or_operation_vertically(board, matrix, half_board_width):
+    for i in range(board.height):
+        for j in range(half_board_width):
+            if board.matrix[i][j] == board.matrix[i][half_board_width + j + 1] and board.matrix[i][j] == background_color:
+                matrix[i][j] = 0
+    return matrix
+
+def or_operation_horizontally(board, matrix, half_board_height):
+    for i in range(half_board_height):
+        for j in range(board.width):
+            if board.matrix[i][j] == board.matrix[half_board_height + i + 1][j] and board.matrix[i][j] == background_color:
+                matrix[i][j] = 0
+    return matrix
