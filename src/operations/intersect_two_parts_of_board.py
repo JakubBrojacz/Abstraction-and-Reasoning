@@ -9,6 +9,9 @@ class InterSectTwoPartsOfBoard(Operation):
         half_board_width = int(board.width/2);
         half_board_height = int(board.height/2);
 
+        if len(board.element_group) != len(board.elements):
+            return None;
+
         if is_vertically_divided(board):
             matrix = [
                 [1 for col in range(half_board_width)]
