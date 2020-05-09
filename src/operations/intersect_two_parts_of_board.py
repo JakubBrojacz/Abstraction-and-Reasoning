@@ -7,6 +7,7 @@ from enum import Enum
 class OperationType(Enum):
     OR = 1
     NOR = 2
+    XOR = 3
 
 class InterSectTwoPartsOfBoard(Operation):
     @classmethod
@@ -27,6 +28,8 @@ class InterSectTwoPartsOfBoard(Operation):
             if args["operation_type"] == OperationType.NOR:
                 matrix = [[value for value in row] for row in or_operation_vertically(board, matrix, half_board_width)]
                 matrix = [[(0, 1)[value == 0] for value in row] for row in matrix]
+            if args["operation_type"] == OperationType.XOR:
+                matrix = [[value for value in row] for row in xor_operation_vertically(board, matrix, half_board_width)]
 
             board.matrix = [
                 [background_color for col in range(half_board_width)]
@@ -48,10 +51,12 @@ class InterSectTwoPartsOfBoard(Operation):
                 for row in range(half_board_height)]
 
             if args["operation_type"] == OperationType.OR:
-                matrix = [[value for value in row] for row in or_operation_vertically(board, matrix, half_board_width)]
+                matrix = [[value for value in row] for row in or_operation_horizontally(board, matrix, half_board_height)]
             if args["operation_type"] == OperationType.NOR:
-                matrix = [[value for value in row] for row in or_operation_vertically(board, matrix, half_board_width)]
+                matrix = [[value for value in row] for row in or_operation_horizontally(board, matrix, half_board_height)]
                 matrix = [[(0, 1)[value == 0] for value in row] for row in matrix]
+            if args["operation_type"] == OperationType.XOR:
+                matrix = [[value for value in row] for row in xor_operation_horizontally(board, matrix, half_board_height)]
 
             board.matrix = [
                 [background_color for col in range(board.width)]
@@ -121,5 +126,19 @@ def or_operation_horizontally(board, matrix, half_board_height):
     for i in range(half_board_height):
         for j in range(board.width):
             if board.matrix[i][j] == board.matrix[half_board_height + i + 1][j] and board.matrix[i][j] == background_color:
+                matrix[i][j] = 0
+    return matrix
+
+def xor_operation_vertically(board, matrix, half_board_width):
+    for i in range(board.height):
+        for j in range(half_board_width):
+            if board.matrix[i][j] == board.matrix[i][half_board_width + j + 1]:
+                matrix[i][j] = 0
+    return matrix
+
+def xor_operation_horizontally(board, matrix, half_board_height):
+    for i in range(half_board_height):
+        for j in range(board.width):
+            if board.matrix[i][j] == board.matrix[half_board_height + i + 1][j]:
                 matrix[i][j] = 0
     return matrix
