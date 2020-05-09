@@ -132,13 +132,13 @@ def or_operation_horizontally(board, matrix, half_board_height):
 def xor_operation_vertically(board, matrix, half_board_width):
     for i in range(board.height):
         for j in range(half_board_width):
-            if board.matrix[i][j] == board.matrix[i][half_board_width + j + 1]:
+            if (board.matrix[i][j] == background_color and board.matrix[i][half_board_width + j + 1] == background_color) or (board.matrix[i][j] != background_color and board.matrix[i][half_board_width + j + 1] != background_color):
                 matrix[i][j] = 0
     return matrix
 
 def xor_operation_horizontally(board, matrix, half_board_height):
     for i in range(half_board_height):
         for j in range(board.width):
-            if board.matrix[i][j] == board.matrix[half_board_height + i + 1][j]:
+            if (board.matrix[i][j] == background_color and board.matrix[half_board_height + i + 1][j] == background_color) or (board.matrix[i][j] != background_color and board.matrix[half_board_height + i + 1][j] != background_color):
                 matrix[i][j] = 0
     return matrix
