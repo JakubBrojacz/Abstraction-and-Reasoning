@@ -59,7 +59,8 @@ def up_reflection(old_board, elements):
     matrix = [
         [background_color for col in range(old_board.width)]
         for row in range(2 * old_board.height)]
-    new_board = board.Board(matrix)
+    new_board = old_board.copy_empty()
+    new_board.matrix = matrix
     elements1 = [element.copy() for element in elements]
     for element in elements1:
         element.pos = (element.pos[0] + old_board.height, element.pos[1])
@@ -74,7 +75,8 @@ def down_reflection(old_board, elements):
     matrix = [
         [background_color for col in range(old_board.width)]
         for row in range(2 * old_board.height)]
-    new_board = board.Board(matrix)
+    new_board = old_board.copy_empty()
+    new_board.matrix = matrix
     elements1 = [element.copy() for element in elements]
     elements2 = [element.copy() for element in elements]
     for element in elements2:
@@ -88,7 +90,8 @@ def right_reflection(old_board, elements):
     matrix = [
         [background_color for col in range(2*old_board.width)]
         for row in range(old_board.height)]
-    new_board = board.Board(matrix)
+    new_board = old_board.copy_empty()
+    new_board.matrix = matrix
     elements1 = [element.copy() for element in elements]
     elements2 = [element.copy() for element in elements]
     for element in elements2:
@@ -102,7 +105,8 @@ def left_reflection(old_board, elements):
     matrix = [
         [background_color for col in range(2 * old_board.width)]
         for row in range(old_board.height)]
-    new_board = board.Board(matrix)
+    new_board = old_board.copy_empty()
+    new_board.matrix = matrix
     elements1 = [element.copy() for element in elements]
     for element in elements1:
         element.pos = (element.pos[0], element.pos[1] + old_board.width)

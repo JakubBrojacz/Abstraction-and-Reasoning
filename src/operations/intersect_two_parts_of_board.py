@@ -10,6 +10,7 @@ class OperationType(Enum):
     NOR = 2
     XOR = 3
 
+
 class Direction(Enum):
     HORIZONTAL = 0
     VERTICAL = 1
@@ -96,17 +97,19 @@ class InterSectTwoPartsOfBoard(Operation):
     def gen_args(cls, board, elements):
         h_divided, col_h = is_horizontally_divided(board)
         v_divided, col_v = is_vertically_divided(board)
+        col_result_h, col_result_v = get_colors_from_result(board, col_v,
+                                                            col_h)
         for operation_type in OperationType:
-            if h_divided:
+            if h_divided and col_result_h is not None:
                 yield {
                     "operation_type": operation_type,
-                    "color": col_h,
+                    "color": col_result_h,
                     "direction": Direction.HORIZONTAL
                 }
-            if v_divided:
+            if v_divided and col_result_v is not None:
                 yield {
                     "operation_type": operation_type,
-                    "color": col_v,
+                    "color": col_result_v,
                     "direction": Direction.VERTICAL
                 }
 
@@ -139,6 +142,22 @@ def is_vertically_divided(board):
             return False, -1
 
     return True, intersect_color
+
+
+def get_colors_from_result(board, col_v, col_h):
+    matrix = board.expected_result.matrix
+    col_result_v = None
+    col_result_h = None
+    for i in range(board.expected_result.height):
+        for j in range(board.expected_result.width):
+            if matrix[i][j] != background_color:
+                if col_result_v is None and matrix[i][j] != col_v:
+                    col_result_v = matrix[i][j]
+                if col_result_h is None and matrix[i][j] != col_h:
+                    col_result_h = matrix[i][j]
+                if col_result_v is None and col_result_h is None:
+                    return col_result_h, col_result_v
+    return col_result_h, col_result_v
 
 
 def or_operation_vertically(board, matrix, half_board_width):

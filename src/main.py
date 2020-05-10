@@ -31,6 +31,7 @@ def prepare_task(task):
     for i in range(num_train):
         task['train'][i]['input'] = board.Board(task['train'][i]['input'])
         task['train'][i]['output'] = board.Board(task['train'][i]['output'])
+        task['train'][i]['input'].expected_result = task['train'][i]['output']
 
     num_test = len(task['test'])
     for i in range(num_test):

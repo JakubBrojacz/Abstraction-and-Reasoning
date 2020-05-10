@@ -13,14 +13,27 @@ class Board:
         self.element_group_counter = None
         self.split_type = None
         self.element_group_type = None
+        self.expected_result = None
 
     def copy(self):
         c = Board(self.matrix)
-        c.elements = [element.copy() for element in self.elements]      
+        c.elements = [element.copy() for element in self.elements]
         c.element_group = [element.copy() for element in self.element_group]
-        c.element_group_counter = [element.copy() for element in self.element_group_counter]
+        c.element_group_counter = [element.copy()
+                                   for element in self.element_group_counter]
         c.split_type = self.split_type
         c.element_group_type = self.element_group_type
+        c.expected_result = self.expected_result
+        return c
+
+    def copy_empty(self):
+        c = Board(self.matrix)
+        c.elements = []
+        c.element_group = []
+        c.element_group_counter = []
+        c.split_type = self.split_type
+        c.element_group_type = self.element_group_type
+        c.expected_result = self.expected_result
         return c
 
     def set_split_type(self, split_type):
