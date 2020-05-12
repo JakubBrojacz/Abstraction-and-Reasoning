@@ -1,4 +1,5 @@
 from config import transparent_color
+from config import number_of_colors
 
 
 class Board:
@@ -96,3 +97,15 @@ class Board:
         if len(self.matrix) == 0:
             return 0
         return len(self.matrix[0])
+
+    @property
+    def colors(self):
+        is_color = [False for col in range(number_of_colors)]
+        for i in range(self.height):
+            for j in range(self.width):
+                is_color[self.matrix[i][j]] = True
+        colors = []
+        for i in range(len(is_color)):
+            if is_color[i]:
+                colors.append(i)
+        return colors
