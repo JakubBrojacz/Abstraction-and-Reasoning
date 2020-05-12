@@ -54,19 +54,24 @@ class FillElements(Operation):
 
     @classmethod
     def gen_args(cls, board, elements):
+        expected_colors = board.expected_result.colors
         for space_connection_type in ConnectionType:
-            for color in range(0, number_of_colors):
+            for color in expected_colors:
                 yield {
                     "ColorSource": ColorSource.ParticularFromAllColors,
                     "Color": color , 
                     "ConnectionType": space_connection_type
                 }
             for element_group_type in element_groups.ELEMENT_GROUPS:
-                yield {
-                    "ColorSource": ColorSource.FromGroup,
-                    "Group": element_group_type , 
-                    "ConnectionType": space_connection_type
-                }
+                reference_group = element_group_type.get_element_group(board)
+                if (len(reference_group) > 0 and
+                reference_group[0].color != None and
+                reference_group[0].color in expected_colors):
+                    yield {
+                        "ColorSource": ColorSource.FromGroup,
+                        "Group": element_group_type , 
+                        "ConnectionType": space_connection_type
+                    }
             yield{
                     "ColorSource": ColorSource.FromElement,
                     "ConnectionType": space_connection_type
