@@ -43,16 +43,20 @@ class MirrorReflectionOfBoard(Operation):
 
     @classmethod
     def gen_args(cls, board, elements):
-        for reflection_type in ReflectionType:
-            yield {
-                "referenced_to_group" : False,
-                "reflection_type": reflection_type
-            }
-        for element_group_type in element_groups.ELEMENT_GROUPS:
-            yield{
-                "referenced_to_group" : True,
-                "group" : element_group_type
+        if (board.expected_result.height != board.height or
+             board.expected_result.width != board.width):
+            for reflection_type in ReflectionType:
+                yield {
+                    "referenced_to_group" : False,
+                    "reflection_type": reflection_type
                 }
+            for element_group_type in element_groups.ELEMENT_GROUPS:
+                reference_group = element_group_type.get_element_group(board)
+                if len(reference_group) > 0:
+                    yield{
+                        "referenced_to_group" : True,
+                        "group" : element_group_type
+                        }
 
 
 def up_reflection(old_board, elements):
