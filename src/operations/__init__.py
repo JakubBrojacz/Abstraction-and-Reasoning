@@ -10,8 +10,10 @@ from .leave_distinct_element import LeaveDistinctElement
 from .shape_replication import ShapeReplication
 from .rotate_board import RotateBoard
 from .intersect_two_parts_of_board import InterSectTwoPartsOfBoard
+from .change_color import ChangeColor
 
 OPERATIONS = [
+    ChangeColor,
     InterSectTwoPartsOfBoard,
     Extract,
     ConnectDots,

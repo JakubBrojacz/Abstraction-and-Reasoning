@@ -9,6 +9,7 @@ class OperationType(Enum):
     OR = 1
     NOR = 2
     XOR = 3
+    AND =4
 
 
 class Direction(Enum):
@@ -41,6 +42,9 @@ class InterSectTwoPartsOfBoard(Operation):
             if args["operation_type"] == OperationType.XOR:
                 matrix = [[value for value in row] for row in xor_operation_vertically(
                     board, matrix, half_board_width)]
+            if args["operation_type"] == OperationType.AND:
+                matrix = [[value for value in row] for row in and_operation_vertically(
+                    board, matrix, half_board_width)]
 
             board.matrix = [
                 [background_color for col in range(half_board_width)]
@@ -72,6 +76,10 @@ class InterSectTwoPartsOfBoard(Operation):
                           for row in matrix]
             if args["operation_type"] == OperationType.XOR:
                 matrix = [[value for value in row] for row in xor_operation_horizontally(
+                    board, matrix, half_board_height)]
+
+            if args["operation_type"] == OperationType.AND:
+                matrix = [[value for value in row] for row in and_operation_horizontally(
                     board, matrix, half_board_height)]
 
             board.matrix = [
@@ -188,5 +196,21 @@ def xor_operation_horizontally(board, matrix, half_board_height):
     for i in range(half_board_height):
         for j in range(board.width):
             if (board.matrix[i][j] == background_color and board.matrix[half_board_height + i + 1][j] == background_color) or (board.matrix[i][j] != background_color and board.matrix[half_board_height + i + 1][j] != background_color):
+                matrix[i][j] = 0
+    return matrix
+
+
+def and_operation_vertically(board, matrix, half_board_width):
+    for i in range(board.height):
+        for j in range(half_board_width):
+            if board.matrix[i][half_board_width + j + 1] == background_color or board.matrix[i][j] == background_color:
+                matrix[i][j] = 0
+    return matrix
+
+
+def and_operation_horizontally(board, matrix, half_board_height):
+    for i in range(half_board_height):
+        for j in range(board.width):
+            if board.matrix[half_board_height + i + 1][j] == background_color or board.matrix[i][j] == background_color:
                 matrix[i][j] = 0
     return matrix
