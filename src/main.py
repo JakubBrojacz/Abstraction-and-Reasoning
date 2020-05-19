@@ -9,7 +9,7 @@ import operations
 import splitting
 import config
 import board
-# import save
+import save
 
 
 def calculate(input_board, paths):
@@ -134,8 +134,9 @@ if __name__ == "__main__":
     tasks = []
     for path in config.training_tasks:
         with open(path, 'r') as file:
-            tasks.append(json.load(file))
-            tasks[-1]["name"] = path
+            task_loaded = json.load(file)
+            task_loaded["name"] = path
+            tasks.append(task_loaded)
 
     if args.filter:
         tasks = taskfilter.filter_tasks_by_max_board_area(
@@ -144,6 +145,7 @@ if __name__ == "__main__":
             tasks, config.min_colors, config.max_colors,
             config.must_have_black)
 
+    results = save.Save()
     passed_tests = 0
     all_tests = 0
 
@@ -158,10 +160,11 @@ if __name__ == "__main__":
                                      strategies.STRATEGY)
         passed_tests_current, all_tests_current =\
             show_results(task, result_boards, args.visualize)
+        results.add_results(result_boards, task["name"])
         passed_tests += passed_tests_current
         all_tests += all_tests_current
 
     print("Results:")
     print(f"Passed tests: {passed_tests}")
     print(f"All tests: {all_tests}")
-    # save.save_results(results, 'submission.csv')
+    results.save_results('submission.csv')
