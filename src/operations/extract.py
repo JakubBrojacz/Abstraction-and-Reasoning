@@ -7,6 +7,9 @@ class Extract(Operation):
     def run_operation(cls, board: Board, elements, args):
         if len(elements) != 1:
             return None
+        #if (elements[0].height == board.height and
+        #    elements[0].width == board.width):
+        #    return None
         board.matrix = [
             [color for color in row]
             for row in elements[0].matrix]

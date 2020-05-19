@@ -10,6 +10,8 @@ class ShapeReplication(Operation):
         if len(board.element_group_counter) != 0:
             return None
 
+        b1 = board.copy()
+
         if args == True:
             width = board.width
             height = board.height
@@ -33,12 +35,12 @@ class ShapeReplication(Operation):
             maxy = 0
 
             for element in elements:
-                if len(element.matrix) == 0 or len(element.matrix[0]) == 0:
+                if element.width == 0 or element.height == 0:
                     continue
                 minx = min(minx, element.pos[1])
                 miny = min(miny, element.pos[0])
-                maxx = max(maxx, element.pos[1] + len(element.matrix) - 1)
-                maxy = max(maxy, element.pos[0] + len(element.matrix[0]) - 1)
+                maxx = max(maxx, element.pos[1] + element.width - 1)
+                maxy = max(maxy, element.pos[0] + element.height - 1)
 
             width = maxx - minx + 1
             height = maxy - miny + 1

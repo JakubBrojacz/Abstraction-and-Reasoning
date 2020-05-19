@@ -31,6 +31,7 @@ def prepare_task(task):
     for i in range(num_train):
         task['train'][i]['input'] = board.Board(task['train'][i]['input'])
         task['train'][i]['output'] = board.Board(task['train'][i]['output'])
+        task['train'][i]['input'].expected_result = task['train'][i]['output']
 
     num_test = len(task['test'])
     for i in range(num_test):
@@ -72,6 +73,7 @@ def show_results(task, result_boards, visualize):
         result_visualize.draw(task, result_boards)
     print(f'{passed_tests}/{len(task["test"])} tests passed with '
           f'{correct_results}/{total_results} correct boards ')
+    return passed_tests, len(task["test"])
 
 
 def process_task(file_path, task, results,
@@ -142,6 +144,9 @@ if __name__ == "__main__":
             tasks, config.min_colors, config.max_colors,
             config.must_have_black)
 
+    passed_tests = 0
+    all_tests = 0
+
     for task in tasks:
         i += 1
         print(task["name"])
@@ -151,6 +156,12 @@ if __name__ == "__main__":
                                      operations.OPERATIONS,
                                      splitting.SPLITTING_TYPES,
                                      strategies.STRATEGY)
-        show_results(task, result_boards, args.visualize)
+        passed_tests_current, all_tests_current =\
+            show_results(task, result_boards, args.visualize)
+        passed_tests += passed_tests_current
+        all_tests += all_tests_current
 
+    print("Results:")
+    print(f"Passed tests: {passed_tests}")
+    print(f"All tests: {all_tests}")
     # save.save_results(results, 'submission.csv')

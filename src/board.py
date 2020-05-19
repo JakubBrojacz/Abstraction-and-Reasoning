@@ -1,4 +1,5 @@
 from config import transparent_color
+from config import number_of_colors
 
 
 class Board:
@@ -13,14 +14,24 @@ class Board:
         self.element_group_counter = None
         self.split_type = None
         self.element_group_type = None
+        self.expected_result = None
 
     def copy(self):
-        c = Board(self.matrix)
-        c.elements = [element.copy() for element in self.elements]      
+        c = self.copy_empty()
+        c.elements = [element.copy() for element in self.elements]
         c.element_group = [element.copy() for element in self.element_group]
-        c.element_group_counter = [element.copy() for element in self.element_group_counter]
+        c.element_group_counter = [element.copy()
+                                   for element in self.element_group_counter]
+        return c
+
+    def copy_empty(self):
+        c = Board(self.matrix)
+        c.elements = []
+        c.element_group = []
+        c.element_group_counter = []
         c.split_type = self.split_type
         c.element_group_type = self.element_group_type
+        c.expected_result = self.expected_result
         return c
 
     def set_split_type(self, split_type):
@@ -86,3 +97,15 @@ class Board:
         if len(self.matrix) == 0:
             return 0
         return len(self.matrix[0])
+
+    @property
+    def colors(self):
+        is_color = [False for col in range(number_of_colors)]
+        for i in range(self.height):
+            for j in range(self.width):
+                is_color[self.matrix[i][j]] = True
+        colors = []
+        for i in range(len(is_color)):
+            if is_color[i]:
+                colors.append(i)
+        return colors
