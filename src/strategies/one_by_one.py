@@ -19,6 +19,8 @@ class OneByOneStrategy:
         self.matches = 0
         for op1 in operations:
             for result1, args1 in op1.try_run(sets[0][0]):
+                if result1 is None:
+                    continue
                 if result1.equals(sets[0][1]):
                     path = [
                         (op1, args1)
@@ -27,9 +29,11 @@ class OneByOneStrategy:
                         return paths
 
                 for op2 in operations:
-                    if op1 == op2:
-                        continue
+                    #if op1 == op2:
+                    #    continue
                     for result2, args2 in op2.try_run(result1):
+                        if result2 is None:
+                            continue
                         if result2.equals(sets[0][1]):
                             path = [
                                 (op1, args1),
@@ -59,9 +63,11 @@ class OneByOneStrategy:
         output: boolean value stating whether output was achieved from input
             via specified path
         '''
-        processed_board = input_board.copy()
+        processed_board = input_board.copy()       
         for operation, args in path:
             processed_board = operation.run(processed_board, args)
+            if processed_board is None:
+                return False
         if processed_board.equals(output_board):
             return True
         return False
