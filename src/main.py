@@ -1,5 +1,6 @@
 import argparse
 import json
+import time
 
 import result_visualize
 import element_groups
@@ -109,25 +110,28 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Abstraction and Reasoning')
     parser.add_argument('--filter',
                         '-f',
-                        type=bool,
                         required=False,
-                        default=False,
-                        action='store',
-                        dest='filter',
+                        action='store_true',
                         help='Filter input tasks?')
     parser.add_argument('--visualize',
                         '-v',
-                        type=bool,
                         required=False,
-                        default=False,
-                        action='store',
-                        dest='visualize',
+                        action='store_true',
                         help='Visualize tasks?')
+    parser.add_argument('--time',
+                        '-t',
+                        required=False,
+                        action='store_true',
+                        help='Measure execution time?')
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = parse_args()
+
+    if args.time:
+        start = time.process_time()
+
     results = []
     i = 0
 
@@ -168,3 +172,7 @@ if __name__ == "__main__":
     print(f"Passed tests: {passed_tests}")
     print(f"All tests: {all_tests}")
     results.save_results('submission.csv')
+
+    if args.time:
+        result_time = time.process_time() - start
+        print(f"Execution CPU time: {result_time}s")
